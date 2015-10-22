@@ -17,12 +17,39 @@
    trace: ITrace;
  }
 
- enum MoveType {
-   INIT, MOVE, PICK, MELD, UNDO, SORT, COMB
- }
+ class MoveType
+ {
+     // boilerplate
+     constructor(public value:string){
+     }
 
- enum SortMoveType {
-   SCORE, COLOR, SET
+     toString(){
+         return this.value;
+     }
+
+     // values
+     static INIT = new MoveType("INIT");
+     static MOVE = new MoveType("MOVE");
+     static PICK = new MoveType("PICK");
+     static MELD = new MoveType("MELD");
+     static UNDO = new MoveType("UNDO");
+     static SORT = new MoveType("SORT");
+     static COMB = new MoveType("COMB");
+ }
+ class SortMoveType
+ {
+     // boilerplate
+     constructor(public value:string){
+     }
+
+     toString(){
+         return this.value;
+     }
+
+     // values
+     static SCORE = new MoveType("SCORE");
+     static COLOR = new MoveType("COLOR");
+     static SET = new MoveType("SET");
  }
 
  interface IDelta{
@@ -36,8 +63,22 @@
    col: number;
  }
 
- enum Color {
-   red, black, orange, blue, joker
+ class Color
+ {
+     // boilerplate
+     constructor(public value:string){
+     }
+
+     toString(){
+         return this.value;
+     }
+
+     // values
+     static red = new MoveType('red');
+     static black = new MoveType('black');
+     static orange = new MoveType('orange');
+     static blue = new MoveType('blue');
+     static joker = new MoveType('joker');
  }
 
  interface ITile{

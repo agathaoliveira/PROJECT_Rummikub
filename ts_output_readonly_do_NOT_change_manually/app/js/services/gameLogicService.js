@@ -7,30 +7,54 @@
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
-var MoveType;
-(function (MoveType) {
-    MoveType[MoveType["INIT"] = 0] = "INIT";
-    MoveType[MoveType["MOVE"] = 1] = "MOVE";
-    MoveType[MoveType["PICK"] = 2] = "PICK";
-    MoveType[MoveType["MELD"] = 3] = "MELD";
-    MoveType[MoveType["UNDO"] = 4] = "UNDO";
-    MoveType[MoveType["SORT"] = 5] = "SORT";
-    MoveType[MoveType["COMB"] = 6] = "COMB";
-})(MoveType || (MoveType = {}));
-var SortMoveType;
-(function (SortMoveType) {
-    SortMoveType[SortMoveType["SCORE"] = 0] = "SCORE";
-    SortMoveType[SortMoveType["COLOR"] = 1] = "COLOR";
-    SortMoveType[SortMoveType["SET"] = 2] = "SET";
-})(SortMoveType || (SortMoveType = {}));
-var Color;
-(function (Color) {
-    Color[Color["red"] = 0] = "red";
-    Color[Color["black"] = 1] = "black";
-    Color[Color["orange"] = 2] = "orange";
-    Color[Color["blue"] = 3] = "blue";
-    Color[Color["joker"] = 4] = "joker";
-})(Color || (Color = {}));
+var MoveType = (function () {
+    // boilerplate
+    function MoveType(value) {
+        this.value = value;
+    }
+    MoveType.prototype.toString = function () {
+        return this.value;
+    };
+    // values
+    MoveType.INIT = new MoveType("INIT");
+    MoveType.MOVE = new MoveType("MOVE");
+    MoveType.PICK = new MoveType("PICK");
+    MoveType.MELD = new MoveType("MELD");
+    MoveType.UNDO = new MoveType("UNDO");
+    MoveType.SORT = new MoveType("SORT");
+    MoveType.COMB = new MoveType("COMB");
+    return MoveType;
+})();
+var SortMoveType = (function () {
+    // boilerplate
+    function SortMoveType(value) {
+        this.value = value;
+    }
+    SortMoveType.prototype.toString = function () {
+        return this.value;
+    };
+    // values
+    SortMoveType.SCORE = new MoveType("SCORE");
+    SortMoveType.COLOR = new MoveType("COLOR");
+    SortMoveType.SET = new MoveType("SET");
+    return SortMoveType;
+})();
+var Color = (function () {
+    // boilerplate
+    function Color(value) {
+        this.value = value;
+    }
+    Color.prototype.toString = function () {
+        return this.value;
+    };
+    // values
+    Color.red = new MoveType('red');
+    Color.black = new MoveType('black');
+    Color.orange = new MoveType('orange');
+    Color.blue = new MoveType('blue');
+    Color.joker = new MoveType('joker');
+    return Color;
+})();
 (function () {
     'use strict';
     /**
