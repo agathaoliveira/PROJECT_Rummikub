@@ -1469,12 +1469,12 @@
          * @param state
          * @returns {Array}
          */
-        function findGroup(groupCandidate: ITile[], state: IState) {
+        function findGroup(groupCandidate: number[], state: IState) {
             var validGroups: number[][] = [];
             var colors: Color[] = [];
             var group: number[] = [];
             for (var i = 0; i < groupCandidate.length; i++) {
-                var tileIndex: number = groupCandidate[i].tileIndex;
+                var tileIndex: number = groupCandidate[i];
                 var color = getTileColorByIndex(tileIndex, state);
                 if (colors.indexOf(color) === -1) {
                     // new color

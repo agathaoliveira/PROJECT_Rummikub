@@ -1309,7 +1309,7 @@ var Color = (function () {
                 var colors = [];
                 var group = [];
                 for (var i = 0; i < groupCandidate.length; i++) {
-                    var tileIndex = groupCandidate[i].tileIndex;
+                    var tileIndex = groupCandidate[i];
                     var color = getTileColorByIndex(tileIndex, state);
                     if (colors.indexOf(color) === -1) {
                         // new color
