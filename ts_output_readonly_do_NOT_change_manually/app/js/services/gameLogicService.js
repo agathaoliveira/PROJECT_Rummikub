@@ -4,6 +4,8 @@
  * Game logic for Rummikub game.
  *
  * @author: Agatha Oliveira
+ * Note: when adding typescript I noticed a few bugs in the code with mismatch of the number of args.
+ * however, remving them broke the code. Thus I left this way as I am not sure of how js is interpreting them.
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -844,34 +846,6 @@
                 }
                 return true;
             }
-            //function getAllSetsOnBoard(board, gameState) {
-            //    var setsOnBoard = [];
-            //    for (var row = 0; row < getGameBoardRows(); row++) {
-            //
-            //        var tileSet = [];
-            //        for (var col  = 0; col < getGameBoardCols(); col++) {
-            //            var tileIndex = board[row][col];
-            //            if (tileIndex === -1) {
-            //                // current set ends
-            //                if (tileSet.length !== 0) {
-            //                    var obj = {tileSet: tileSet, start: {row: row, col: col - tileSet.length}};
-            //                    setsOnBoard.push(obj);
-            //                    tileSet = [];
-            //                }
-            //            } else {
-            //                check(tileIndex >= 0 && tileIndex < 106,
-            //                    "tileIndex: " + tileIndex
-            //                );
-            //                tileSet.push(findTileFromGameStateByIndex(tileIndex, gameState));
-            //            }
-            //        }
-            //        // in case last tileSet ends at last element of row
-            //        if (tileSet.length !== 0) {
-            //            setsOnBoard.push({tileSet: tileSet, start: {row: row, col: col - tileSet.length}});
-            //        }
-            //    }
-            //    return setsOnBoard;
-            //}
             /**
              * gets the score for player's initial meld.
              * In initial meld, only sets contain no tiles that from opponents can be calculated,
@@ -1009,9 +983,6 @@
              * @returns {Array}
              */
             function findAllSetInHand(playerHand, state) {
-                //if (playerHand.length === 0) {
-                //    return playerHand;
-                //}
                 // try to find all groups in hand
                 var hand = angular.copy(playerHand);
                 // 1. find all groups in hand

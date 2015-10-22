@@ -3,7 +3,9 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira 
+ * @author: Agatha Oliveira
+ * Note: when adding typescript I noticed a few bugs in the code with mismatch of the number of args.
+ * however, remving them broke the code. Thus I left this way as I am not sure of how js is interpreting them.
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -256,7 +258,7 @@ type Board = number[][];
          * @param undo
          * @returns {*[]}
          */
-        function getMoveMove(playerIndex: number, stateBefore: IState, delta, undo): IMove {
+        function getMoveMove(playerIndex: number, stateBefore: IState, delta: IDelta, undo: boolean): IMove {
             var tileToMove = delta.tileIndex;
             var from = delta.from;
             var to = delta.to;
@@ -443,7 +445,7 @@ type Board = number[][];
 
         function getSortMove(playerIndex: number, stateBefore: IState, sortType: string): IMove {
             var boardAfter = angular.copy(stateBefore.board);
-            var playerHand = boardAfter[getPlayerRow(playerIndex)];
+            var playerHand: number[] = boardAfter[getPlayerRow(playerIndex)];
             switch (sortType) {
                 case "score":
                 case "color":
@@ -523,8 +525,8 @@ type Board = number[][];
             var computerDeltas: IDelta[] = [];
 
             // 1. find all sets in hand (group > set)
-            var playerHand = angular.copy(stateBefore.board[getPlayerRow(playerIndex)]);
-            var hand = angular.copy(playerHand);
+            var playerHand: number[] = angular.copy(stateBefore.board[getPlayerRow(playerIndex)]);
+            var hand: number[] = angular.copy(playerHand);
 
             var findResultOfGroupFirst = findSetsInHand(playerHand, stateBefore, "groupFirst");
             var sets = findResultOfGroupFirst.sets;
@@ -578,7 +580,7 @@ type Board = number[][];
             for (var i = 0; i < sets.length; i++) {
                 for (var j = 0; j < sets[i].length; j++) {
                     var tileIndex = sets[i][j];
-                    var tile = gameState["tile" + tileIndex];
+                    var tile: ITileInfo = gameState["tile" + tileIndex];
                     // joker's score in initial meld is 0
                     if (tile.color !== "joker") {
                         score += tile.score;
@@ -627,7 +629,7 @@ type Board = number[][];
             return null;
         }
 
-        function findSetsInHand(tiles, state: IState) {
+        function findSetsInHand(tiles: number[], state: IState) {
             var remains = tiles;
             var sets: number[][] = [];
             var groups: number[][] = [];
@@ -648,7 +650,7 @@ type Board = number[][];
             return {sets: sets, remains: remains};
         }
 
-        function getRemainTilesFromSets(tiles, sets: number[][]) {
+        function getRemainTilesFromSets(tiles: number[], sets: number[][]) {
             var result = angular.copy(tiles);
             for (var i = 0; i < sets.length; i++) {
                 for (var j = 0; j < sets[i].length; j++) {
@@ -689,9 +691,9 @@ type Board = number[][];
          * @param nPlayers number of players in current game.
          * @returns {number} index of next turn.
          */
-        function getPlayerIndexOfNextTurn(playerIndex: number, nPlayers: number) {
+        function getPlayerIndexOfNextTurn(playerIndex: number, nPlayers: number): number {
             checkPlayerIndex(playerIndex, nPlayers);
-            var index = 0;
+            var index: number = 0;
             if (playerIndex === nPlayers - 1) {
                 index = 0;
             } else {
@@ -896,10 +898,10 @@ type Board = number[][];
             return true;
         }
 
-        function getSetsOfTilesByIndex(setsOfTileIndices: number[], state: IState) {
-            var result = [];
+        function getSetsOfTilesByIndex(setsOfTileIndices: number[], state: IState): ITileInfo[] {
+            var result: ITileInfo[] = [];
             for (var i = 0; i < setsOfTileIndices.length; i++) {
-                var tile = state["tile" + setsOfTileIndices[i]];
+                var tile: ITileInfo = state["tile" + setsOfTileIndices[i]];
                 result.push(tile);
             }
             return result;
@@ -933,7 +935,7 @@ type Board = number[][];
                         var score = 0;
                         for (var j = 0; j < tilesRemaining.length; j++) {
                             // adding each tile's score
-                            var tile = state["tile" + tilesRemaining[j]];
+                            var tile: ITileInfo = state["tile" + tilesRemaining[j]];
                             if (tile.color === 'joker') {
                                 // joker tile's score is 30
                                 score -= 30;
@@ -981,35 +983,6 @@ type Board = number[][];
             }
             return true;
         }
-
-        //function getAllSetsOnBoard(board, gameState) {
-        //    var setsOnBoard = [];
-        //    for (var row = 0; row < getGameBoardRows(); row++) {
-        //
-        //        var tileSet = [];
-        //        for (var col  = 0; col < getGameBoardCols(); col++) {
-        //            var tileIndex = board[row][col];
-        //            if (tileIndex === -1) {
-        //                // current set ends
-        //                if (tileSet.length !== 0) {
-        //                    var obj = {tileSet: tileSet, start: {row: row, col: col - tileSet.length}};
-        //                    setsOnBoard.push(obj);
-        //                    tileSet = [];
-        //                }
-        //            } else {
-        //                check(tileIndex >= 0 && tileIndex < 106,
-        //                    "tileIndex: " + tileIndex
-        //                );
-        //                tileSet.push(findTileFromGameStateByIndex(tileIndex, gameState));
-        //            }
-        //        }
-        //        // in case last tileSet ends at last element of row
-        //        if (tileSet.length !== 0) {
-        //            setsOnBoard.push({tileSet: tileSet, start: {row: row, col: col - tileSet.length}});
-        //        }
-        //    }
-        //    return setsOnBoard;
-        //}
 
         /**
          * gets the score for player's initial meld.
@@ -1154,12 +1127,9 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function findAllSetInHand(playerHand: number[], state: IState) {
-            //if (playerHand.length === 0) {
-            //    return playerHand;
-            //}
+        function findAllSetInHand(playerHand: number[], state: IState): number[] {
             // try to find all groups in hand
-            var hand = angular.copy(playerHand);
+            var hand: number[] = angular.copy(playerHand);
 
             // 1. find all groups in hand
             var groups: number[][] = findAllGroups(hand, state);
@@ -1278,7 +1248,7 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function findGroup(groupCandidate: number[], state: IState) {
+        function findGroup(groupCandidate: number[], state: IState): number[][] {
             var validGroups: number[][] = [];
             var colors: string[] = [];
             var group: number[] = [];
@@ -1297,12 +1267,12 @@ type Board = number[][];
             return validGroups;
         }
 
-        function getTileScoreByIndex(tileIndex: number, state: IState) {
+        function getTileScoreByIndex(tileIndex: number, state: IState): number {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].score;
         }
 
-        function getTileColorByIndex(tileIndex: number, state: IState) {
+        function getTileColorByIndex(tileIndex: number, state: IState): string {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].color;
         }
@@ -1317,8 +1287,8 @@ type Board = number[][];
          */
         function sortBy(type: string, state: IState) {
             return function (tileIndexA: number, tileIndexB: number) {
-                var tileA = state["tile" + tileIndexA];
-                var tileB =  state["tile" + tileIndexB];
+                var tileA: ITileInfo = state["tile" + tileIndexA];
+                var tileB: ITileInfo =  state["tile" + tileIndexB];
                 if (type === "score") {
                     return tileA.score - tileB.score;
                 } else {
