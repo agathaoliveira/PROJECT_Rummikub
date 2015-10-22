@@ -3,26 +3,10 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira
+ * @author: Jingxin Zhu
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
-
-type Board = number[][];
-
- interface IState{
-   board?: Board;
-   delta?: IDelta;
-   trace?: ITrace;
- }
-
- interface IDelta
- {
-
- }
- interface ITrace
- {}
-
 (function () {
 
     'use strict';
@@ -92,10 +76,10 @@ type Board = number[][];
          * @param param (object) {turnIndexBeforeMove:(int), stateBeforeMove: (object), move:[]}
          * @returns {boolean}
          */
-        function isMoveOk(param: IIsMoveOk): boolean {
-            var playerIndex: number = param.turnIndexBeforeMove;
-            var stateBefore: IState = param.stateBeforeMove;
-            var actualMove: IMove  = param.move;
+        function isMoveOk(param) {
+            var playerIndex = param.turnIndexBeforeMove;
+            var stateBefore = param.stateBeforeMove;
+            var actualMove  = param.move;
             try {
                 var expectedMove = createMove(stateBefore, playerIndex, actualMove);
                 if (!angular.equals(actualMove, expectedMove)) {
@@ -133,14 +117,14 @@ type Board = number[][];
          * @param actualMove
          * @returns {*}
          */
-        function createMove(stateBefore: IState, playerIndex: number, actualMove: IMove): IMove {
+        function createMove(stateBefore, playerIndex, actualMove) {
             var moveType = actualMove[1].set.value;
             if (moveType !== "INIT") {
                 check( !isGameOver(stateBefore),
                     "Game is over, you cannot move any move"
                 );
             }
-            var expectedMove: IMove;
+            var expectedMove;
             var deltas;
             switch (moveType) {
                 case "INIT":
@@ -237,13 +221,13 @@ type Board = number[][];
          * @param undo
          * @returns {*[]}
          */
-        function getMoveMove(playerIndex: number, stateBefore: IState, delta, undo): IMove {
+        function getMoveMove(playerIndex, stateBefore, delta, undo) {
             var tileToMove = delta.tileIndex;
             var from = delta.from;
             var to = delta.to;
 
             // 1. get game board
-            var board: Board = stateBefore.board;
+            var board = stateBefore.board;
             var deltas = stateBefore.deltas;
 
             var playerRow = getPlayerRow(playerIndex);
@@ -323,7 +307,7 @@ type Board = number[][];
          * @param stateBefore
          * @returns {*[]}
          */
-        function getPickMove(playerIndex, stateBefore: IState) {
+        function getPickMove(playerIndex, stateBefore) {
 
             var playerRow = getGameBoardRows() + playerIndex;
 
@@ -370,7 +354,7 @@ type Board = number[][];
          * @param stateBefore
          * @returns {*[]}
          */
-        function getMeldMove(playerIndex, stateBefore: IState): IMove {
+        function getMeldMove(playerIndex, stateBefore) {
             var board = stateBefore.board;
             var playerRow = getPlayerRow(playerIndex);
             var deltas = stateBefore.deltas;
@@ -422,7 +406,7 @@ type Board = number[][];
 
         }
 
-        function getSortMove(playerIndex, stateBefore: IState, sortType): IMove {
+        function getSortMove(playerIndex, stateBefore, sortType) {
             var boardAfter = angular.copy(stateBefore.board);
             var playerHand = boardAfter[getPlayerRow(playerIndex)];
             switch (sortType) {
@@ -450,7 +434,7 @@ type Board = number[][];
          * @param playerIndex
          * @param stateBefore
          */
-        function getSingleUndoMove(playerIndex, stateBefore: IState): IMove {
+        function getSingleUndoMove(playerIndex, stateBefore) {
             var deltas = stateBefore.deltas;
             var delta = deltas[deltas.length - 1];
             // reverse the last delta, and then make that move
@@ -460,7 +444,7 @@ type Board = number[][];
             return moveUndo;
         }
 
-        function getCombinedMove(playerIndex, stateBefore: IState, deltas) : IMove{
+        function getCombinedMove(playerIndex, stateBefore, deltas) {
 
             check(deltas.length > 0, "no move to make");
 
@@ -485,7 +469,7 @@ type Board = number[][];
             return move;
         }
 
-        function checkDelta(delta, board: Board) {
+        function checkDelta(delta, board) {
             check(delta.tileIndex !== undefined && delta.from !== undefined, delta.to !== undefined,
                 "missing part for delta" );
 
@@ -497,8 +481,8 @@ type Board = number[][];
         }
 
 
-        function getPossibleMoves(playerIndex, stateBefore: IState): IMove[]{
-            var possibleMoves: IMove[] = [];
+        function getPossibleMoves(playerIndex, stateBefore) {
+            var possibleMoves = [];
             possibleMoves.push(getPickMove(playerIndex, stateBefore));
 
             var computerDeltas = [];
@@ -663,7 +647,7 @@ type Board = number[][];
         //    return gameState["tile" + tileIndex];
         //}
 
-        function getScore(sets, gameState: IState): number {
+        function getScore(sets, gameState) {
             var score = 0;
             for (var i = 0; i < sets.length; i++) {
                 for (var j = 0; j < sets[i].length; j++) {
@@ -678,7 +662,7 @@ type Board = number[][];
             return score;
         }
 
-        function getNextEmptySlotInBoard(board: Board, start, slot_size) {
+        function getNextEmptySlotInBoard(board, start, slot_size) {
             //if (start.row > getGameBoardRows() ) {
             //    return null;
             //}
@@ -717,7 +701,7 @@ type Board = number[][];
             return null;
         }
 
-        function findSetsInHand(tiles, state: IState) {
+        function findSetsInHand(tiles, state) {
             var remains = tiles;
             var sets = [];
             var groups = [];
@@ -787,13 +771,13 @@ type Board = number[][];
          * @param condition condition to be tested and expected to be true.
          * @param message error message when condition is not satisfied.
          */
-        function check(condition: boolean, message: string) {
+        function check(condition, message) {
             if (condition === false) {
                 throw new Error(message);
             }
         }
 
-        function checkPlayerIndex(playerIndex: number, nPlayers: number) {
+        function checkPlayerIndex(playerIndex, nPlayers) {
             check( playerIndex >= 0 && playerIndex < nPlayers,
                 "checkPlayerIndex, [playerIndex:  " + playerIndex + ", nPlayers: " + nPlayers);
         }
@@ -805,7 +789,7 @@ type Board = number[][];
          * @param nPlayers number of players in current game.
          * @returns {number} index of next turn.
          */
-        function getPlayerIndexOfNextTurn(playerIndex: number, nPlayers: number) {
+        function getPlayerIndexOfNextTurn(playerIndex, nPlayers) {
             checkPlayerIndex(playerIndex, nPlayers);
             var index = 0;
             if (playerIndex === nPlayers - 1) {
@@ -822,8 +806,8 @@ type Board = number[][];
          * @param nPlayers
          * @returns {Array}
          */
-        function getInitialBoard(nPlayers: number) {
-            var board: Board = [
+        function getInitialBoard(nPlayers) {
+            var board = [
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
@@ -853,7 +837,7 @@ type Board = number[][];
          * @param row
          * @param col
          */
-        function checkPositionWithinBoard(board: Board, row: number, col: number) {
+        function checkPositionWithinBoard(board, row, col) {
             check (row !== undefined && col !== undefined,
                 "checkPositionWithinBoard: (row, col) = (" + row + "," +  col + ") is undefined"
             );
@@ -872,10 +856,10 @@ type Board = number[][];
          * @param index (int)
          * @returns {{color: *, score: *}}
          */
-        function getTileByIndex(index: number) {
+        function getTileByIndex(index) {
             check (index >=0  && index < 106, "Illegal index");
-            var color: string;
-            var score: number;
+            var color;
+            var score;
             if (index === 104 || index === 105) {
                 color = "joker";
                 score = 0;
@@ -902,7 +886,7 @@ type Board = number[][];
          * @param row (array[int]) array of tile indices.
          * @returns {Array}
          */
-        function parseRowToSets(row: number) {
+        function parseRowToSets(row) {
             var result = [];
             var tileSet = [];
             for (var i = 0; i < row.length; i++) {
@@ -1033,7 +1017,7 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function getEndScores(winnerIndex, state: IState) {
+        function getEndScores(winnerIndex, state) {
             var result = [];
             var nPlayers = state.trace.nplayers;
             if (winnerIndex === -1 ) {
@@ -1076,7 +1060,7 @@ type Board = number[][];
          * @param initial
          * @returns {boolean}
          */
-        function isMeldOk(stateBefore: IState, board: Board, playerIndex: number, initial: boolean): boolean {
+        function isMeldOk(stateBefore, board, playerIndex, initial) {
             var setsInBoard = [];
             // get all 'sets' in game board by scanning each row of board
             for (var i = 0; i < getGameBoardRows(); i++) {
@@ -1137,7 +1121,7 @@ type Board = number[][];
          * @param tilesSentThisTurn
          * @returns {number}
          */
-        function getInitialMeldScore(state: IState, setsInBoard, tilesSentThisTurn): number {
+        function getInitialMeldScore(state, setsInBoard, tilesSentThisTurn) {
             var score = 0;
             for (var i = 0; i < setsInBoard.length; i++) {
                 var tilesAllFromPlayer = true;
@@ -1165,7 +1149,7 @@ type Board = number[][];
          * @param state
          * @returns {boolean}
          */
-        function isGameOver(state: IState): boolean {
+        function isGameOver(state) {
             return getWinner(state.board, state.deltas) !== -1 || isTie(state);
         }
 
@@ -1177,7 +1161,7 @@ type Board = number[][];
          * @param deltas
          * @returns {number}
          */
-        function getWinner(board: Board, deltas): number {
+        function getWinner(board, deltas) {
             var hasLoser = false;
             var winner = -1;
             // check each player's hand
@@ -1198,7 +1182,7 @@ type Board = number[][];
          * or no player can make valid move any more.
          * @returns {boolean}
          */
-        function isTie(state: IState): boolean {
+        function isTie(state) {
             return state.trace.nexttile >= 106;
         }
 
@@ -1209,7 +1193,7 @@ type Board = number[][];
          * @param deltas
          * @returns {boolean}
          */
-        function isTileSentToBoardInCurrentTurnByPlayer(tileIndex: number, playerIndex, deltas): boolean {
+        function isTileSentToBoardInCurrentTurnByPlayer(tileIndex, playerIndex, deltas) {
             var playerRow = getPlayerRow(playerIndex);
             for (var i = 0 ; i < deltas.length; i++) {
                 if (deltas[i].tileIndex === tileIndex &&
@@ -1225,7 +1209,7 @@ type Board = number[][];
          * @param playerIndex
          * @returns {*}
          */
-        function getPlayerRow(playerIndex: number) {
+        function getPlayerRow(playerIndex) {
             return getGameBoardRows() + playerIndex;
         }
 
@@ -1244,7 +1228,7 @@ type Board = number[][];
          * @param playerRow
          * @returns {Array} [tileIndex] sent to board by current player in this turn
          */
-        function getTilesSentToBoardThisTurn(deltas, playerRow: number) {
+        function getTilesSentToBoardThisTurn(deltas, playerRow) {
             var result = [];
             var count = 0;
             for (var i = 0; i < deltas.length; i++) {
@@ -1270,7 +1254,7 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function findAllSetInHand(playerHand, state: IState) {
+        function findAllSetInHand(playerHand, state) {
             //if (playerHand.length === 0) {
             //    return playerHand;
             //}
@@ -1313,7 +1297,7 @@ type Board = number[][];
          * @param state
          * @returns {Array} each array is array of valid run [[1,2,3],[4,5,6]]
          */
-        function findAllRuns(tiles, state: IState) {
+        function findAllRuns(tiles, state) {
             if (tiles.length === 0) {
                 return [];
             }
@@ -1339,7 +1323,7 @@ type Board = number[][];
             return runs;
         }
 
-        function findRun(runCandidate, state: IState) {
+        function findRun(runCandidate, state) {
             //console.log("same: " + runCandidate);
             var validRuns = [];
             var scoreExpect = getTileScoreByIndex(runCandidate[0], state);
@@ -1364,7 +1348,7 @@ type Board = number[][];
             return validRuns;
         }
 
-        function findAllGroups(tiles, state: IState) {
+        function findAllGroups(tiles, state) {
             tiles.sort(sortBy("score", state));
             var groups = [];
             var fast = getTileScoreByIndex(tiles[0], state);
@@ -1394,7 +1378,7 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function findGroup(groupCandidate, state: IState) {
+        function findGroup(groupCandidate, state) {
             var validGroups = [];
             var colors = [];
             var group = [];
@@ -1413,12 +1397,12 @@ type Board = number[][];
             return validGroups;
         }
 
-        function getTileScoreByIndex(tileIndex, state: IState) {
+        function getTileScoreByIndex(tileIndex, state) {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].score;
         }
 
-        function getTileColorByIndex(tileIndex, state: IState) {
+        function getTileColorByIndex(tileIndex, state) {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].color;
         }
@@ -1431,8 +1415,8 @@ type Board = number[][];
          * @param state
          * @returns {Function}
          */
-        function sortBy(type: string, state: IState) {
-            return function (tileIndexA: number, tileIndexB: number) {
+        function sortBy(type, state) {
+            return function (tileIndexA, tileIndexB) {
                 var tileA = state["tile" + tileIndexA];
                 var tileB =  state["tile" + tileIndexB];
                 if (type === "score") {
