@@ -13,8 +13,7 @@
     angular.module('myApp')
         .controller('GameCtrl', [
         '$scope', '$log', '$window', '$animate', '$timeout', '$translate', 'gameLogicService', 'gameAIService', 'CONFIG',
-        function($scope, $log, $window,  $animate, $timeout, $translate, stateService ,gameService,
-                 dragAndDropService, gameLogicService, gameAIService, CONFIG) {
+        function($scope, $log, $window,  $animate, $timeout, $translate, gameLogicService, gameAIService, CONFIG) {
 
             /*************************************************************
              *********************   Configuration  *********************/
