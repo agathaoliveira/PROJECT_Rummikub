@@ -497,17 +497,20 @@
         function getSortMove(playerIndex: number, stateBefore: IState, sortType: SortMoveType): IMove {
             var boardAfter = angular.copy(stateBefore.board);
             var playerHand = boardAfter[getPlayerRow(playerIndex)];
-            switch (sortType) {
-                case SortMoveType.SCORE:
-                case SortMoveType.COLOR:
-                    playerHand.sort(sortBy(sortType, stateBefore));
-                    break;
-                case SortMoveType.SET:
-                    boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
-                    break;
-                default :
-                    throw new Error("Unexpected sort type: " + sortType);
-            }
+            
+                if (sortType === SortMoveType.SCORE || sortType === SortMoveType.COLOR)
+                {
+                  playerHand.sort(sortBy(sortType, stateBefore));
+                }
+                else if (sortType === SortMoveType.SET)
+                {
+                  boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
+                }
+                else
+                {
+                  throw new Error("Unexpected sort type: " + sortType);
+                }
+
             return [
                 {setTurn: {turnIndex: playerIndex}},
                 {set: {key: 'type', value: MoveType.SORT}},
