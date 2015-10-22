@@ -18,8 +18,11 @@ type Board = number[][];
 
  interface IDelta
  {
-
+   tileIndex: number;
+   from: {row: number ,col: number };
+   to: {row: number, col: number};
  }
+
  interface ITrace
  {}
 
@@ -1244,7 +1247,7 @@ type Board = number[][];
          * @param playerRow
          * @returns {Array} [tileIndex] sent to board by current player in this turn
          */
-        function getTilesSentToBoardThisTurn(deltas, playerRow: number) {
+        function getTilesSentToBoardThisTurn(deltas: IDelta[], playerRow: number) {
             var result = [];
             var count = 0;
             for (var i = 0; i < deltas.length; i++) {
@@ -1270,7 +1273,7 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function findAllSetInHand(playerHand, state: IState) {
+        function findAllSetInHand(playerHand: number[], state: IState) {
             //if (playerHand.length === 0) {
             //    return playerHand;
             //}
@@ -1279,14 +1282,14 @@ type Board = number[][];
 
             // 1. find all groups in hand
             var groups = findAllGroups(hand, state);
-            var handAfter = [];
+            var handAfter: number[] = [];
             for (var i = 0; i < groups.length; i++) {
                 //console.log("group: " + groups[i]);
                 // append all valid groups
                 handAfter = handAfter.concat(groups[i]);
             }
             // 2. get the rest tiles in hand
-            var restTiles = [];
+            var restTiles: number[] = [];
             for (var ii = 0; ii < hand.length; ii++) {
                 if (handAfter.indexOf(hand[ii]) === -1) {
                     restTiles.push(hand[ii]);
@@ -1313,14 +1316,14 @@ type Board = number[][];
          * @param state
          * @returns {Array} each array is array of valid run [[1,2,3],[4,5,6]]
          */
-        function findAllRuns(tiles, state: IState) {
+        function findAllRuns(tiles: number[], state: IState) {
             if (tiles.length === 0) {
                 return [];
             }
             tiles.sort(sortBy("color", state));
-            var runs = [];
+            var runs: number[][] = [];
             var fast = getTileColorByIndex(tiles[0], state);
-            var sameColor = [];
+            var sameColor: number[] = [];
             for (var i = 0; i < tiles.length; i++) {
                 var tileIndex = tiles[i];
                 var color = getTileColorByIndex(tileIndex, state);
@@ -1328,7 +1331,7 @@ type Board = number[][];
                     sameColor.push(tileIndex);
                 }
                 if (color !== fast || i === tiles.length - 1) {
-                    var validRuns = findRun(sameColor, state);
+                    var validRuns: number[][] = findRun(sameColor, state);
                     if (validRuns.length > 0) {
                         runs = runs.concat(validRuns);
                     }
