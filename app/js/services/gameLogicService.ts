@@ -175,6 +175,7 @@
                 case MoveType.INIT:
                     var nPlayers: number = actualMove[2].set.value.nplayers;
                     expectedMove = getInitialMove(nPlayers);
+                    console.log("INITIAL MOVE: " + JSON.stringify(expectedMove));
                     break;
                 case MoveType.MOVE:
                     deltas = actualMove[3].set.value;
