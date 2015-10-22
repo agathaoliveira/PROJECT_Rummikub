@@ -34,9 +34,9 @@ var SortMoveType = (function () {
         return this.value;
     };
     // values
-    SortMoveType.SCORE = new MoveType("SCORE");
-    SortMoveType.COLOR = new MoveType("COLOR");
-    SortMoveType.SET = new MoveType("SET");
+    SortMoveType.SCORE = new MoveType("score");
+    SortMoveType.COLOR = new MoveType("color");
+    SortMoveType.SET = new MoveType("set");
     return SortMoveType;
 })();
 var Color = (function () {

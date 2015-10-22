@@ -47,9 +47,9 @@
      }
 
      // values
-     static SCORE = new MoveType("SCORE");
-     static COLOR = new MoveType("COLOR");
-     static SET = new MoveType("SET");
+     static SCORE = new MoveType("score");
+     static COLOR = new MoveType("color");
+     static SET = new MoveType("set");
  }
 
  interface IDelta{
