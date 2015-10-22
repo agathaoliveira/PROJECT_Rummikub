@@ -3,7 +3,7 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira
+ * @author: Agatha Oliveira 2
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -1339,11 +1339,11 @@ type Board = number[][];
             return runs;
         }
 
-        function findRun(runCandidate, state: IState) {
+        function findRun(runCandidate: number[], state: IState): number[][] {
             //console.log("same: " + runCandidate);
-            var validRuns = [];
+            var validRuns: number[][] = [];
             var scoreExpect = getTileScoreByIndex(runCandidate[0], state);
-            var consecutive = [];
+            var consecutive: number[] = [];
             for (var i = 0; i < runCandidate.length; i++) {
                 var tileIndex = runCandidate[i];
                 var score = getTileScoreByIndex(tileIndex, state);
@@ -1364,11 +1364,11 @@ type Board = number[][];
             return validRuns;
         }
 
-        function findAllGroups(tiles, state: IState) {
+        function findAllGroups(tiles: number[], state: IState): number[][] {
             tiles.sort(sortBy("score", state));
-            var groups = [];
+            var groups: number[][] = [];
             var fast = getTileScoreByIndex(tiles[0], state);
-            var group = [];
+            var group: number[] = [];
             for (var i = 0; i < tiles.length; i++) {
                 var tileIndex = tiles[i];
                 var score = getTileScoreByIndex(tileIndex, state);

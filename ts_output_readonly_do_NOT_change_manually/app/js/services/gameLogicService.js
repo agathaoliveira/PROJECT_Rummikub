@@ -3,7 +3,7 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira
+ * @author: Agatha Oliveira 2
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
