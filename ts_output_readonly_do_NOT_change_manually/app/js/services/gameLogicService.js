@@ -418,7 +418,6 @@
                 var possibleMoves = [];
                 possibleMoves.push(getPickMove(playerIndex, stateBefore));
                 var computerDeltas = [];
-                //var playerRow = getPlayerRow(playerIndex);
                 // 1. find all sets in hand (group > set)
                 var playerHand = angular.copy(stateBefore.board[getPlayerRow(playerIndex)]);
                 var hand = angular.copy(playerHand);
@@ -430,38 +429,8 @@
                         ableToInitial = false;
                     }
                 }
-                //var remains = findResultOfGroupFirst.remains;
-                //var findResultOfRunFirst = findSetsInHand(playerHand, stateBefore, "runFirst");
-                //var sets2 = findResultOfRunFirst.sets;
-                //var remains2 = findResultOfRunFirst.remains;
-                //console.log("sets1: " + sets);
-                //console.log("sets2: " + sets2);
                 // 2. for rest tiles, try to append them using tiles in board
                 var board = angular.copy(stateBefore.board);
-                //if (stateBefore.trace.initial[playerIndex] === true) {
-                //    // only able to append tile to other tiles on board when finish initial meld
-                //    var expectingTiles = getExpectingTiles(stateBefore);
-                //    console.log("expect: " + printObj(expectingTiles));
-                //
-                //    if (expectingTiles.length > 0) {
-                //        for (var i = 0 ; i < remains.length; i++) {
-                //            var tileIndex = remains[i];
-                //            var tile = findTileFromGameStateByIndex(remains[i], stateBefore);
-                //            for (var j = 0; j < expectingTiles; j++) {
-                //                if (angular.equals(tile, expectingTiles[j].tile)) {
-                //                    var delta = {tileIndex: remains[i],
-                //                        from: {row: playerRow, col: hand.indexOf(tileIndex)},
-                //                        to: expectingTiles[j].pos
-                //                    };
-                //                    computerDeltas.push(delta);
-                //                    board[delta.to.row][delta.to.col] = delta.tileIndex;
-                //                    board[delta.from.row][delta.from.col] = -1;
-                //                    break;
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
                 // 3. find proper position to place sets
                 var start = { row: 0, col: 0 };
                 for (var i = 0; i < sets.length; i++) {
@@ -489,79 +458,6 @@
                 }
                 return possibleMoves;
             }
-            //function getExpectingTiles (gameState) {
-            //    var expecting = [];
-            //    var board = gameState.board;
-            //    var setsOnBoard = getAllSetsOnBoard(board, gameState);
-            //
-            //    // check each set
-            //    for (var i = 0; i < setsOnBoard.length; i++) {
-            //        var tileSet = setsOnBoard[i].tileSet;
-            //        var start = setsOnBoard[i].start;
-            //        //console.log("here: " + printObj(tileSet));
-            //        //console.log("at: " + printObj(start) );
-            //
-            //        //TODO: deal with set that has joker inside
-            //        var hasJoker = false;
-            //        for (var j = 0; j < tileSet.length; j++) {
-            //            if (tileSet[j].color === 'joker') {
-            //                hasJoker = true;
-            //            }
-            //        }
-            //
-            //        //TODO: let computer rearrange tiles on board
-            //        if (hasJoker === false) {
-            //            var colToSend;
-            //            if (tileSet[0].color === tileSet[1].color) {
-            //                // expecting a tile inserted into run
-            //                colToSend = start.col + tileSet.length;
-            //                var highScore = tileSet[tileSet.length - 1].score;
-            //                if (highScore < 13 &&
-            //                    colToSend < getGameBoardCols() && colToSend + 1 < getGameBoardCols() &&
-            //                        board[start.row][colToSend] === -1 && board[start.row][colToSend + 1] === -1
-            //                ) {
-            //                    expecting.push({tile: {score: highScore + 1, color: tileSet[0].color}, pos: {row: start.row, col: colToSend}});
-            //                }
-            //                var lowScore = tileSet[0].score;
-            //                if (lowScore > 1 &&
-            //                        colToSend >= 0 && colToSend - 1 >= 0 &&
-            //                        board[start.row][colToSend] === -1 && board[start.row][colToSend - 1] === -1
-            //                ) {
-            //                    expecting.push({tile: {score: lowScore - 1, color: tileSet[0].color, pos: {row: start.row, col: colToSend}}});
-            //                }
-            //
-            //            } else {
-            //                // expecting a tile inserted into group
-            //                if (tileSet.length === 3) {
-            //                    var colors = ["black", "red", "blue", "orange"];
-            //                    for (var ii = 0; ii < 3; ii++) {
-            //                        var index = colors.indexOf(tileSet[i].color);
-            //                        if (index !== -1) {
-            //                            colors.splice(index, 1);
-            //                        }
-            //                    }
-            //                    colToSend = start.col + tileSet.length;
-            //                    if ( colToSend < getGameBoardCols() && colToSend + 1 < getGameBoardCols() &&
-            //                        board[start.row][colToSend] === -1 && board[start.row][colToSend + 1] === -1
-            //                    ) {
-            //                        expecting.push({
-            //                            tile: {score: tileSet[0].score, color: colors[0]},
-            //                            pos: {row: start.row, col: colToSend}
-            //                        });
-            //                    }
-            //                }
-            //
-            //            }
-            //        }
-            //
-            //    }
-            //    return expecting;
-            //
-            //}
-            //function findTileFromGameStateByIndex(tileIndex, gameState) {
-            //    check (gameState["tile" + tileIndex] !== undefined, "undefined tile");
-            //    return gameState["tile" + tileIndex];
-            //}
             function getScore(sets, gameState) {
                 var score = 0;
                 for (var i = 0; i < sets.length; i++) {
