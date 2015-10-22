@@ -214,16 +214,17 @@ var Color;
                 }
                 // 3.2. initialize tile visibility
                 var visibility = [];
+                var visibilityOperations = [];
                 for (var ii = 0; ii < nPlayers; ii++) {
                     for (var jj = 0; jj < nTilesPerPlayerInitially; jj++) {
                         // each player has 14 tiles in hand initially
                         tileIndex = ii * nTilesPerPlayerInitially + jj;
                         visibility[tileIndex] = { key: 'tile' + tileIndex, visibleToPlayerIndexes: [ii] };
-                        move.push({ setVisibility: visibility[tileIndex] });
+                        visibilityOperations.push({ setVisibility: visibility[tileIndex] });
                     }
                 }
                 move.push(shuffleKeys);
-                // move = move.concat(visibility);
+                move = move.concat(visibilityOperations);
                 return move;
             }
             /**
