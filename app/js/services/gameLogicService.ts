@@ -83,7 +83,7 @@
 
  interface ITile{
    tileIndex?:number;
-   color?: Color;
+   color?: string;
    score?: number;
  }
 
@@ -494,15 +494,15 @@
 
         }
 
-        function getSortMove(playerIndex: number, stateBefore: IState, sortType: SortMoveType): IMove {
+        function getSortMove(playerIndex: number, stateBefore: IState, sortType: string): IMove {
             var boardAfter = angular.copy(stateBefore.board);
             var playerHand = boardAfter[getPlayerRow(playerIndex)];
-            
-                if (sortType === SortMoveType.SCORE || sortType === SortMoveType.COLOR)
+
+                if (sortType === SortMoveType.SCORE.toString() || sortType === SortMoveType.COLOR.toString())
                 {
                   playerHand.sort(sortBy(sortType, stateBefore));
                 }
-                else if (sortType === SortMoveType.SET)
+                else if (sortType === SortMoveType.SET.toString())
                 {
                   boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
                 }
@@ -745,7 +745,7 @@
                     var tileIndex = sets[i][j];
                     var tile: ITile = gameState["tile" + tileIndex];
                     // joker's score in initial meld is 0
-                    if (tile.color !== Color.joker) {
+                    if (tile.color !== Color.joker.toString()) {
                         score += tile.score;
                     }
                 }
@@ -949,20 +949,20 @@
          */
         function getTileByIndex(index: number): ITile {
             check (index >=0  && index < 106, "Illegal index");
-            var color: Color;
+            var color: string;
             var score: number;
             if (index === 104 || index === 105) {
-                color = Color.joker;
+                color = Color.joker.toString();
                 score = 0;
             } else {
                 if (index < 26) {
-                    color = Color.blue;
+                    color = Color.blue.toString();
                 } else if (index < 52) {
-                    color = Color.red;
+                    color = Color.red.toString();
                 } else if (index < 78) {
-                    color = Color.black;
+                    color = Color.black.toString();
                 } else {
-                    color = Color.orange;
+                    color = Color.orange.toString();
                 }
                 score = index % 13  + 1;
             }
@@ -1017,17 +1017,17 @@
             if (len < 3 || len > 13) {
                 return false;
             }
-            var sameColor: Color;
+            var sameColor: string;
             var expectScore = 0;
             for (var i = 0; i < len; i++) {
                 var color = sets[i].color;
                 var score = sets[i].score;
-                if (color !== Color.joker) {
+                if (color !== Color.joker.toString()) {
                     // 1. check same color
                     if (sameColor === undefined) {
                         sameColor = color;
                     }
-                    if (sameColor !== color) {
+                    if (sameColor !== color.toString()) {
                         return false;
                     }
 
@@ -1062,11 +1062,11 @@
                 return false;
             }
             var sameScore: number = undefined;
-            var colors: Color[] = [];
+            var colors: string[] = [];
             for (var i = 0; i < length; i++) {
-                var color: Color = sets[i].color;
+                var color: string = sets[i].color;
                 var score: number = sets[i].score;
-                if (color !== Color.joker) {
+                if (color !== Color.joker.toString()) {
                     // 1. check scores are the same
                     if (sameScore === undefined) {
                         // 1st score from the sets
@@ -1125,7 +1125,7 @@
                         for (var j = 0; j < tilesRemaining.length; j++) {
                             // adding each tile's score
                             var tile: ITile = state["tile" + tilesRemaining[j]];
-                            if (tile.color === Color.joker) {
+                            if (tile.color === Color.joker.toString()) {
                                 // joker tile's score is 30
                                 score -= 30;
                             } else {
@@ -1392,7 +1392,7 @@
             if (tiles.length === 0) {
                 return [];
             }
-            tiles.sort(sortBy(SortMoveType.COLOR, state));
+            tiles.sort(sortBy(SortMoveType.COLOR.toString(), state));
             var runs: number[][] = [];
             var fast = getTileColorByIndex(tiles[0].tileIndex, state);
             var sameColor: number[] = [];
@@ -1440,7 +1440,7 @@
         }
 
         function findAllGroups(tiles: ITile[], state: IState): number[][] {
-            tiles.sort(sortBy(SortMoveType.SCORE, state));
+            tiles.sort(sortBy(SortMoveType.SCORE.toString(), state));
             var groups: number[][] = [];
             var fast: number = getTileScoreByIndex(tiles[0].tileIndex, state);
             var group: number[] = [];
@@ -1506,11 +1506,11 @@
          * @param state
          * @returns {Function}
          */
-        function sortBy(type: SortMoveType, state: IState) {
+        function sortBy(type: string, state: IState) {
             return function (tileIndexA: number, tileIndexB: number) {
                 var tileA: ITile = state["tile" + tileIndexA];
                 var tileB: ITile =  state["tile" + tileIndexB];
-                if (type === SortMoveType.SCORE) {
+                if (type === SortMoveType.SCORE.toString()) {
                     return tileA.score - tileB.score;
                 } else {
                     // sort by "color"
