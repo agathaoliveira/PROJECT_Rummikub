@@ -175,7 +175,6 @@
                 case MoveType.INIT:
                     var nPlayers: number = actualMove[2].set.value.nplayers;
                     expectedMove = getInitialMove(nPlayers);
-                    console.log("INITIAL MOVE: " + JSON.stringify(expectedMove));
                     break;
                 case MoveType.MOVE:
                     deltas = actualMove[3].set.value;
@@ -251,11 +250,12 @@
                     // each player has 14 tiles in hand initially
                     tileIndex = ii * nTilesPerPlayerInitially + jj;
                     visibility[tileIndex] = {key: 'tile' + tileIndex, visibleToPlayerIndexes: [ii]};
+                    move.push({setVisibility: visibility[tileIndex]});
                 }
             }
 
             move.push(shuffleKeys);
-            move = move.concat(visibility);
+            // move = move.concat(visibility);
             return move;
         }
 
