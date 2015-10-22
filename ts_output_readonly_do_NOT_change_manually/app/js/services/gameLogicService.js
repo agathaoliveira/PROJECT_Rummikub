@@ -7,54 +7,6 @@
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
-var MoveType = (function () {
-    // boilerplate
-    function MoveType(value) {
-        this.value = value;
-    }
-    MoveType.prototype.toString = function () {
-        return this.value;
-    };
-    // values
-    MoveType.INIT = new MoveType("INIT");
-    MoveType.MOVE = new MoveType("MOVE");
-    MoveType.PICK = new MoveType("PICK");
-    MoveType.MELD = new MoveType("MELD");
-    MoveType.UNDO = new MoveType("UNDO");
-    MoveType.SORT = new MoveType("SORT");
-    MoveType.COMB = new MoveType("COMB");
-    return MoveType;
-})();
-var SortMoveType = (function () {
-    // boilerplate
-    function SortMoveType(value) {
-        this.value = value;
-    }
-    SortMoveType.prototype.toString = function () {
-        return this.value;
-    };
-    // values
-    SortMoveType.SCORE = new MoveType("score");
-    SortMoveType.COLOR = new MoveType("color");
-    SortMoveType.SET = new MoveType("set");
-    return SortMoveType;
-})();
-var Color = (function () {
-    // boilerplate
-    function Color(value) {
-        this.value = value;
-    }
-    Color.prototype.toString = function () {
-        return this.value;
-    };
-    // values
-    Color.red = new MoveType('red');
-    Color.black = new MoveType('black');
-    Color.orange = new MoveType('orange');
-    Color.blue = new MoveType('blue');
-    Color.joker = new MoveType('joker');
-    return Color;
-})();
 (function () {
     'use strict';
     /**
@@ -97,7 +49,7 @@ var Color = (function () {
      *  2 - setBoard: {set: {key: 'board', value: [[..]]}}
      *  3 - setDelta: {set: {key: 'deltas', value: [...]}}
      *  4 - setTrace: {set: {key: 'trace', value: {}}
-     * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndexes: [1]}},
+     * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndices: [1]}},
      *
      *
      * II. Operations: the operation player chooses for current move.
@@ -165,35 +117,35 @@ var Color = (function () {
              */
             function createMove(stateBefore, playerIndex, actualMove) {
                 var moveType = actualMove[1].set.value;
-                if (moveType !== MoveType.INIT) {
+                if (moveType !== "INIT") {
                     check(!isGameOver(stateBefore), "Game is over, you cannot move any move");
                 }
                 var expectedMove;
                 var deltas;
                 switch (moveType) {
-                    case MoveType.INIT:
+                    case "INIT":
                         var nPlayers = actualMove[2].set.value.nplayers;
                         expectedMove = getInitialMove(nPlayers);
                         break;
-                    case MoveType.MOVE:
+                    case "MOVE":
                         deltas = actualMove[3].set.value;
                         var delta = deltas[deltas.length - 1];
                         expectedMove = getMoveMove(playerIndex, stateBefore, delta, null);
                         break;
-                    case MoveType.PICK:
+                    case "PICK":
                         expectedMove = getPickMove(playerIndex, stateBefore);
                         break;
-                    case MoveType.MELD:
+                    case "MELD":
                         expectedMove = getMeldMove(playerIndex, stateBefore);
                         break;
-                    case MoveType.SORT:
+                    case "SORT":
                         var sortType = actualMove[2].set.value;
                         expectedMove = getSortMove(playerIndex, stateBefore, sortType);
                         break;
-                    case MoveType.UNDO:
+                    case "UNDO":
                         expectedMove = getSingleUndoMove(playerIndex, stateBefore);
                         break;
-                    case MoveType.COMB:
+                    case "COMB":
                         deltas = actualMove[3].set.value;
                         expectedMove = getCombinedMove(playerIndex, stateBefore, deltas);
                         break;
@@ -220,7 +172,7 @@ var Color = (function () {
                 var nTilesPerPlayerInitially = 14;
                 var move = [
                     { setTurn: { turnIndex: 0 } },
-                    { set: { key: 'type', value: MoveType.INIT } },
+                    { set: { key: 'type', value: "INIT" } },
                     { set: { key: 'trace', value: {
                                 nplayers: nPlayers,
                                 initial: initial,
@@ -230,25 +182,23 @@ var Color = (function () {
                 ];
                 // 3.1. initialize game tiles and shuffle keys
                 var tiles = [];
-                var shuffleKeys = { keys: [] };
+                var shuffleKeys = [];
                 for (var tileIndex = 0; tileIndex < 106; tileIndex++) {
-                    tiles[tileIndex] = { key: "tile" + tileIndex, value: getTileByIndex(tileIndex) };
-                    move.push({ set: tiles[tileIndex] });
-                    shuffleKeys.keys[tileIndex] = 'tile' + tileIndex;
+                    tiles[tileIndex] = { set: { key: "tile" + tileIndex, value: getTileByIndex(tileIndex) } };
+                    shuffleKeys[tileIndex] = 'tile' + tileIndex;
                 }
                 // 3.2. initialize tile visibility
                 var visibility = [];
-                var visibilityOperations = [];
                 for (var ii = 0; ii < nPlayers; ii++) {
                     for (var jj = 0; jj < nTilesPerPlayerInitially; jj++) {
                         // each player has 14 tiles in hand initially
                         tileIndex = ii * nTilesPerPlayerInitially + jj;
-                        visibility[tileIndex] = { key: 'tile' + tileIndex, visibleToPlayerIndexes: [ii] };
-                        visibilityOperations.push({ setVisibility: visibility[tileIndex] });
+                        visibility[tileIndex] = { setVisibility: { key: 'tile' + tileIndex, visibleToPlayerIndices: [ii] } };
                     }
                 }
-                move.push({ shuffle: shuffleKeys });
-                move = move.concat(visibilityOperations);
+                move = move.concat(tiles);
+                move.push({ shuffle: { keys: shuffleKeys } });
+                move = move.concat(visibility);
                 return move;
             }
             /**
@@ -302,10 +252,10 @@ var Color = (function () {
                 boardAfter[from.row][from.col] = -1;
                 boardAfter[to.row][to.col] = tileToMove;
                 var deltasAfter = angular.copy(deltas);
-                var moveTypeAfter = MoveType.MOVE;
+                var moveTypeAfter = "MOVE";
                 if (undo !== undefined && undo === true) {
                     deltasAfter.splice(deltasAfter.length - 1, 1);
-                    moveTypeAfter = MoveType.UNDO;
+                    moveTypeAfter = "UNDO";
                 }
                 else {
                     deltasAfter.push(delta);
@@ -315,7 +265,7 @@ var Color = (function () {
                     { set: { key: 'type', value: moveTypeAfter } },
                     { set: { key: 'board', value: boardAfter } },
                     { set: { key: 'deltas', value: deltasAfter } },
-                    { setVisibility: { key: 'tile' + tileToMove, visibleToPlayerIndexes: visibility } }
+                    { setVisibility: { key: 'tile' + tileToMove, visibleToPlayerIndices: visibility } }
                 ];
             }
             /**
@@ -336,22 +286,22 @@ var Color = (function () {
                 var tileToPick = stateBefore.trace.nexttile;
                 // 3. construct move operations.
                 var boardAfter = angular.copy(stateBefore.board);
-                boardAfter[playerRow].push(tileToPick.tileIndex);
+                boardAfter[playerRow].push(tileToPick);
                 // sort tiles in hand by finding all sets and put sets at the front
                 boardAfter[playerRow] = findAllSetInHand(boardAfter[playerRow], stateBefore);
                 var traceAfter = angular.copy(stateBefore.trace);
-                traceAfter.nexttile = { tileIndex: tileToPick.tileIndex + 1 };
+                traceAfter.nexttile = tileToPick + 1;
                 var firstOperation = { setTurn: { turnIndex: getPlayerIndexOfNextTurn(playerIndex, stateBefore.trace.nplayers) } };
                 if (traceAfter.nexttile === 106) {
                     firstOperation = { endMatch: { endMatchScores: getEndScores(-1, stateBefore) } };
                 }
                 return [
                     firstOperation,
-                    { set: { key: 'type', value: MoveType.PICK } },
+                    { set: { key: 'type', value: "PICK" } },
                     { set: { key: 'board', value: boardAfter } },
                     { set: { key: 'deltas', value: [] } },
                     { set: { key: 'trace', value: traceAfter } },
-                    { setVisibility: { key: 'tile' + tileToPick, visibleToPlayerIndexes: [playerIndex] } }
+                    { setVisibility: { key: 'tile' + tileToPick, visibleToPlayerIndices: [playerIndex] } }
                 ];
             }
             /**
@@ -397,7 +347,7 @@ var Color = (function () {
                 traceAfter.initial[playerIndex] = true;
                 return [
                     firstOperation,
-                    { set: { key: 'type', value: MoveType.MELD } },
+                    { set: { key: 'type', value: "MELD" } },
                     { set: { key: 'board', value: boardAfter } },
                     { set: { key: 'deltas', value: [] } },
                     { set: { key: 'trace', value: traceAfter } }
@@ -406,18 +356,20 @@ var Color = (function () {
             function getSortMove(playerIndex, stateBefore, sortType) {
                 var boardAfter = angular.copy(stateBefore.board);
                 var playerHand = boardAfter[getPlayerRow(playerIndex)];
-                if (sortType === SortMoveType.SCORE.toString() || sortType === SortMoveType.COLOR.toString()) {
-                    playerHand.sort(sortBy(sortType, stateBefore));
-                }
-                else if (sortType === SortMoveType.SET.toString()) {
-                    boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
-                }
-                else {
-                    throw new Error("Unexpected sort type: " + sortType);
+                switch (sortType) {
+                    case "score":
+                    case "color":
+                        playerHand.sort(sortBy(sortType, stateBefore), stateBefore);
+                        break;
+                    case "set":
+                        boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
+                        break;
+                    default:
+                        throw new Error("Unexpected sort type: " + sortType);
                 }
                 return [
                     { setTurn: { turnIndex: playerIndex } },
-                    { set: { key: 'type', value: MoveType.SORT } },
+                    { set: { key: 'type', value: "SORT" } },
                     { set: { key: 'sorttype', value: sortType } },
                     { set: { key: 'board', value: boardAfter } }
                 ];
@@ -434,7 +386,7 @@ var Color = (function () {
                 // reverse the last delta, and then make that move
                 var deltaUndo = { tileIndex: delta.tileIndex, from: delta.to, to: delta.from };
                 var moveUndo = getMoveMove(playerIndex, stateBefore, deltaUndo, true);
-                moveUndo[1].set.value = MoveType.UNDO;
+                moveUndo[1].set.value = "UNDO";
                 return moveUndo;
             }
             function getCombinedMove(playerIndex, stateBefore, deltas) {
@@ -450,7 +402,7 @@ var Color = (function () {
                 traceAfter.initial[playerIndex] = true;
                 var move = [
                     { setTurn: { turnIndex: playerIndex } },
-                    { set: { key: 'type', value: MoveType.COMB } },
+                    { set: { key: 'type', value: "COMB" } },
                     { set: { key: 'board', value: board } },
                     { set: { key: 'deltas', value: deltas } },
                     { set: { key: 'trace', value: traceAfter } }
@@ -458,7 +410,7 @@ var Color = (function () {
                 return move;
             }
             function checkDelta(delta, board) {
-                check(delta.tileIndex !== undefined && delta.from !== undefined && delta.to !== undefined, "missing part for delta");
+                check(delta.tileIndex !== undefined && delta.from !== undefined, delta.to !== undefined, "missing part for delta");
                 check(board[delta.from.row][delta.from.col] === delta.tileIndex, "tile" + delta.tileIndex + " is not at board[" + delta.from.row + "][" + delta.from.col + "]");
                 check(board[delta.to.row][delta.to.col] === -1, "position is occupied");
             }
@@ -470,7 +422,7 @@ var Color = (function () {
                 // 1. find all sets in hand (group > set)
                 var playerHand = angular.copy(stateBefore.board[getPlayerRow(playerIndex)]);
                 var hand = angular.copy(playerHand);
-                var findResultOfGroupFirst = findSetsInHand(playerHand, stateBefore);
+                var findResultOfGroupFirst = findSetsInHand(playerHand, stateBefore, "groupFirst");
                 var sets = findResultOfGroupFirst.sets;
                 var ableToInitial = true;
                 if (stateBefore.trace.initial[playerIndex] === false) {
@@ -524,7 +476,7 @@ var Color = (function () {
                         };
                         //console.log("aa: " + sets[i][j] + " , "  + hand);
                         computerDeltas.push(delta);
-                        board[delta.from.row][delta.from.col] = -1;
+                        board[delta.from.row][delta.from.to] = -1;
                         board[delta.to.row][delta.to.col] = delta.tileIndex;
                     }
                     start = { row: emptySlot.row, col: emptySlot.col + sets[i].length };
@@ -617,7 +569,7 @@ var Color = (function () {
                         var tileIndex = sets[i][j];
                         var tile = gameState["tile" + tileIndex];
                         // joker's score in initial meld is 0
-                        if (tile.color !== Color.joker.toString()) {
+                        if (tile.color !== "joker") {
                             score += tile.score;
                         }
                     }
@@ -805,21 +757,21 @@ var Color = (function () {
                 var color;
                 var score;
                 if (index === 104 || index === 105) {
-                    color = Color.joker.toString();
+                    color = "joker";
                     score = 0;
                 }
                 else {
                     if (index < 26) {
-                        color = Color.blue.toString();
+                        color = 'blue';
                     }
                     else if (index < 52) {
-                        color = Color.red.toString();
+                        color = 'red';
                     }
                     else if (index < 78) {
-                        color = Color.black.toString();
+                        color = 'black';
                     }
                     else {
-                        color = Color.orange.toString();
+                        color = 'orange';
                     }
                     score = index % 13 + 1;
                 }
@@ -876,12 +828,12 @@ var Color = (function () {
                 for (var i = 0; i < len; i++) {
                     var color = sets[i].color;
                     var score = sets[i].score;
-                    if (color !== Color.joker.toString()) {
+                    if (color !== 'joker') {
                         // 1. check same color
                         if (sameColor === undefined) {
                             sameColor = color;
                         }
-                        if (sameColor !== color.toString()) {
+                        if (sameColor !== color) {
                             return false;
                         }
                         // 2. check number, cannot repeat number in current numbers;
@@ -913,12 +865,12 @@ var Color = (function () {
                 if (length !== 3 && length !== 4) {
                     return false;
                 }
-                var sameScore = undefined;
+                var sameScore;
                 var colors = [];
                 for (var i = 0; i < length; i++) {
                     var color = sets[i].color;
                     var score = sets[i].score;
-                    if (color !== Color.joker.toString()) {
+                    if (color !== 'joker') {
                         // 1. check scores are the same
                         if (sameScore === undefined) {
                             // 1st score from the sets
@@ -975,7 +927,7 @@ var Color = (function () {
                             for (var j = 0; j < tilesRemaining.length; j++) {
                                 // adding each tile's score
                                 var tile = state["tile" + tilesRemaining[j]];
-                                if (tile.color === Color.joker.toString()) {
+                                if (tile.color === 'joker') {
                                     // joker tile's score is 30
                                     score -= 30;
                                 }
@@ -1213,8 +1165,8 @@ var Color = (function () {
                     handAfter = handAfter.concat(runs[j]);
                 }
                 for (var k = 0; k < restTiles.length; k++) {
-                    if (handAfter.indexOf(restTiles[k].tileIndex) === -1) {
-                        handAfter.push(restTiles[k].tileIndex);
+                    if (handAfter.indexOf(restTiles[k]) === -1) {
+                        handAfter.push(restTiles[k]);
                     }
                 }
                 return handAfter;
@@ -1229,12 +1181,12 @@ var Color = (function () {
                 if (tiles.length === 0) {
                     return [];
                 }
-                tiles.sort(sortBy(SortMoveType.COLOR.toString(), state));
+                tiles.sort(sortBy("color", state));
                 var runs = [];
-                var fast = getTileColorByIndex(tiles[0].tileIndex, state);
+                var fast = getTileColorByIndex(tiles[0], state);
                 var sameColor = [];
                 for (var i = 0; i < tiles.length; i++) {
-                    var tileIndex = tiles[i].tileIndex;
+                    var tileIndex = tiles[i];
                     var color = getTileColorByIndex(tileIndex, state);
                     if (color === fast) {
                         sameColor.push(tileIndex);
@@ -1253,10 +1205,10 @@ var Color = (function () {
             function findRun(runCandidate, state) {
                 //console.log("same: " + runCandidate);
                 var validRuns = [];
-                var scoreExpect = getTileScoreByIndex(runCandidate[0].tileIndex, state);
+                var scoreExpect = getTileScoreByIndex(runCandidate[0], state);
                 var consecutive = [];
                 for (var i = 0; i < runCandidate.length; i++) {
-                    var tileIndex = runCandidate[i].tileIndex;
+                    var tileIndex = runCandidate[i];
                     var score = getTileScoreByIndex(tileIndex, state);
                     if (scoreExpect === score) {
                         consecutive.push(tileIndex);
@@ -1276,7 +1228,7 @@ var Color = (function () {
                 return validRuns;
             }
             function findAllGroups(tiles, state) {
-                tiles.sort(sortBy(SortMoveType.SCORE.toString(), state));
+                tiles.sort(sortBy("score", state));
                 var groups = [];
                 var fast = getTileScoreByIndex(tiles[0], state);
                 var group = [];
@@ -1342,7 +1294,7 @@ var Color = (function () {
                 return function (tileIndexA, tileIndexB) {
                     var tileA = state["tile" + tileIndexA];
                     var tileB = state["tile" + tileIndexB];
-                    if (type === SortMoveType.SCORE.toString()) {
+                    if (type === "score") {
                         return tileA.score - tileB.score;
                     }
                     else {

@@ -7,92 +7,6 @@
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
-
- type Board = number[][];
- type DeltaHistory = IDelta[];
-
- interface IState {
-   board: Board;
-   deltas: DeltaHistory;
-   trace: ITrace;
- }
-
- class MoveType
- {
-     // boilerplate
-     constructor(public value:string){
-     }
-
-     toString(){
-         return this.value;
-     }
-
-     // values
-     static INIT = new MoveType("INIT");
-     static MOVE = new MoveType("MOVE");
-     static PICK = new MoveType("PICK");
-     static MELD = new MoveType("MELD");
-     static UNDO = new MoveType("UNDO");
-     static SORT = new MoveType("SORT");
-     static COMB = new MoveType("COMB");
- }
- class SortMoveType
- {
-     // boilerplate
-     constructor(public value:string){
-     }
-
-     toString(){
-         return this.value;
-     }
-
-     // values
-     static SCORE = new MoveType("score");
-     static COLOR = new MoveType("color");
-     static SET = new MoveType("set");
- }
-
- interface IDelta{
-   tileIndex?: number;
-   from?: IPosition;
-   to?: IPosition;
- }
-
- interface IPosition{
-   row: number;
-   col: number;
- }
-
- class Color
- {
-     // boilerplate
-     constructor(public value:string){
-     }
-
-     toString(){
-         return this.value;
-     }
-
-     // values
-     static red = new MoveType('red');
-     static black = new MoveType('black');
-     static orange = new MoveType('orange');
-     static blue = new MoveType('blue');
-     static joker = new MoveType('joker');
- }
-
- interface ITile{
-   tileIndex?:number;
-   color?: string;
-   score?: number;
- }
-
- interface ITrace{
-   nplayers: number;
-   initial: boolean[];
-   nexttile: ITile;
- }
-
 (function () {
 
     'use strict';
@@ -137,7 +51,7 @@
      *  2 - setBoard: {set: {key: 'board', value: [[..]]}}
      *  3 - setDelta: {set: {key: 'deltas', value: [...]}}
      *  4 - setTrace: {set: {key: 'trace', value: {}}
-     * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndexes: [1]}},
+     * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndices: [1]}},
      *
      *
      * II. Operations: the operation player chooses for current move.
@@ -162,17 +76,17 @@
          * @param param (object) {turnIndexBeforeMove:(int), stateBeforeMove: (object), move:[]}
          * @returns {boolean}
          */
-        function isMoveOk(param: IIsMoveOk):boolean {
-            var playerIndex : number = param.turnIndexBeforeMove;
-            var stateBefore : IState = param.stateBeforeMove;
-            var actualMove : IMove  = param.move;
+        function isMoveOk(param) {
+            var playerIndex = param.turnIndexBeforeMove;
+            var stateBefore = param.stateBeforeMove;
+            var actualMove  = param.move;
             try {
-                var expectedMove : IMove = createMove(stateBefore, playerIndex, actualMove);
+                var expectedMove = createMove(stateBefore, playerIndex, actualMove);
                 if (!angular.equals(actualMove, expectedMove)) {
                     if (CONFIG.SETTING.verbose) {
                         // print debug info
-                        var actLen : number = actualMove.length;
-                        var expLen : number = expectedMove.length;
+                        var actLen = actualMove.length;
+                        var expLen = expectedMove.length;
                         if (actLen !== expLen) {
                             console.log("Different length for actual move and expected move");
                         } else {
@@ -203,39 +117,39 @@
          * @param actualMove
          * @returns {*}
          */
-        function createMove(stateBefore: IState, playerIndex: number, actualMove: IMove) : IMove {
+        function createMove(stateBefore, playerIndex, actualMove) {
             var moveType = actualMove[1].set.value;
-            if (moveType !== MoveType.INIT) {
+            if (moveType !== "INIT") {
                 check( !isGameOver(stateBefore),
                     "Game is over, you cannot move any move"
                 );
             }
-            var expectedMove: IMove;
-            var deltas: DeltaHistory;
+            var expectedMove;
+            var deltas;
             switch (moveType) {
-                case MoveType.INIT:
-                    var nPlayers: number = actualMove[2].set.value.nplayers;
+                case "INIT":
+                    var nPlayers = actualMove[2].set.value.nplayers;
                     expectedMove = getInitialMove(nPlayers);
                     break;
-                case MoveType.MOVE:
+                case "MOVE":
                     deltas = actualMove[3].set.value;
                     var delta = deltas[deltas.length - 1];
                     expectedMove = getMoveMove(playerIndex, stateBefore, delta, null);
                     break;
-                case MoveType.PICK:
+                case "PICK":
                     expectedMove = getPickMove(playerIndex, stateBefore);
                     break;
-                case MoveType.MELD:
+                case "MELD":
                     expectedMove = getMeldMove(playerIndex, stateBefore);
                     break;
-                case MoveType.SORT:
+                case "SORT":
                     var sortType = actualMove[2].set.value;
                     expectedMove = getSortMove(playerIndex, stateBefore, sortType);
                     break;
-                case MoveType.UNDO:
+                case "UNDO":
                     expectedMove = getSingleUndoMove(playerIndex, stateBefore);
                     break;
-                case MoveType.COMB:
+                case "COMB":
                     deltas = actualMove[3].set.value;
                     expectedMove = getCombinedMove(playerIndex, stateBefore, deltas);
                     break;
@@ -251,22 +165,22 @@
          * @param nPlayers (int) number of players in current game.
          * @returns {*[]} array of operations in initial move.
          */
-        function getInitialMove(nPlayers: number): IMove {
+        function getInitialMove(nPlayers) {
             // 1. make sure 2 - 4 players are playing the game.
             check(nPlayers <= 4 && nPlayers >= 0,
                 "INIT: nPlayers = " + nPlayers + " is given, but only 2 - 4 players are allowed."
             );
 
             // Initially, set 'initial' to false, i.e. no player has made initial meld
-            var initial: boolean[] = [];
+            var initial = [];
             for (var i = 0; i < nPlayers; i++) {
                 initial.push(false);
             }
             // 2. construct the move
-            var nTilesPerPlayerInitially: number = 14;
-            var move: IMove = [
+            var nTilesPerPlayerInitially = 14;
+            var move = [
                 {setTurn: {turnIndex: 0}},
-                {set: {key: 'type', value: MoveType.INIT}},
+                {set: {key: 'type', value: "INIT"}},
                 {set: {key: 'trace', value: {
                     nplayers: nPlayers,
                     initial: initial,
@@ -276,28 +190,26 @@
             ];
 
             // 3.1. initialize game tiles and shuffle keys
-            var tiles: ISet[] = [];
-            var shuffleKeys:IShuffle = {keys: []};
+            var tiles = [];
+            var shuffleKeys = [];
             for (var tileIndex = 0; tileIndex< 106; tileIndex++) {
-                tiles[tileIndex] = {key: "tile" + tileIndex, value: getTileByIndex(tileIndex)};
-                move.push({set: tiles[tileIndex]});
-                shuffleKeys.keys[tileIndex] = 'tile' + tileIndex;
+                tiles[tileIndex] = {set: {key: "tile" + tileIndex, value: getTileByIndex(tileIndex)}};
+                shuffleKeys[tileIndex] = 'tile' + tileIndex;
             }
 
             // 3.2. initialize tile visibility
-            var visibility: ISetVisibility[] = [];
-            var visibilityOperations: IMove = [];
+            var visibility = [];
             for (var ii = 0; ii < nPlayers; ii++) {
                 for (var jj = 0; jj < nTilesPerPlayerInitially; jj++) {
                     // each player has 14 tiles in hand initially
                     tileIndex = ii * nTilesPerPlayerInitially + jj;
-                    visibility[tileIndex] = {key: 'tile' + tileIndex, visibleToPlayerIndexes: [ii]};
-                    visibilityOperations.push({ setVisibility: visibility[tileIndex] });
+                    visibility[tileIndex] = {setVisibility: {key: 'tile' + tileIndex, visibleToPlayerIndices: [ii]}};
                 }
             }
 
-            move.push({shuffle: shuffleKeys});
-            move = move.concat(visibilityOperations);
+            move = move.concat(tiles);
+            move.push({shuffle: {keys: shuffleKeys}});
+            move = move.concat(visibility);
             return move;
         }
 
@@ -309,16 +221,16 @@
          * @param undo
          * @returns {*[]}
          */
-        function getMoveMove(playerIndex: number, stateBefore: IState, delta: IDelta, undo: boolean): IMove {
-            var tileToMove: number = delta.tileIndex;
-            var from: IPosition = delta.from;
-            var to: IPosition = delta.to;
+        function getMoveMove(playerIndex, stateBefore, delta, undo) {
+            var tileToMove = delta.tileIndex;
+            var from = delta.from;
+            var to = delta.to;
 
             // 1. get game board
-            var board: Board = stateBefore.board;
-            var deltas: DeltaHistory = stateBefore.deltas;
+            var board = stateBefore.board;
+            var deltas = stateBefore.deltas;
 
-            var playerRow: number = getPlayerRow(playerIndex);
+            var playerRow = getPlayerRow(playerIndex);
 
             // 2.1 check from's position is within board, not empty and consistent as declared in delta
             checkPositionWithinBoard(board, from.row, from.col);
@@ -353,7 +265,7 @@
             }
 
             // null means every player can see
-            var visibility: number[] = null;
+            var visibility = null;
 
             // 4. can only send tile which was sent to game board in current turn
             // back to player hand
@@ -372,10 +284,10 @@
             boardAfter[to.row][to.col] = tileToMove;
 
             var deltasAfter = angular.copy(deltas);
-            var moveTypeAfter = MoveType.MOVE;
+            var moveTypeAfter = "MOVE";
             if (undo !== undefined && undo === true) {
                 deltasAfter.splice(deltasAfter.length - 1, 1);
-                moveTypeAfter = MoveType.UNDO;
+                moveTypeAfter = "UNDO";
             } else {
                 deltasAfter.push(delta);
             }
@@ -385,7 +297,7 @@
                 {set: {key: 'type', value: moveTypeAfter}},
                 {set: {key: 'board', value: boardAfter}},
                 {set: {key: 'deltas', value: deltasAfter}},
-                {setVisibility: {key: 'tile' + tileToMove, visibleToPlayerIndexes: visibility}}
+                {setVisibility: {key: 'tile' + tileToMove, visibleToPlayerIndices: visibility}}
             ];
         }
 
@@ -395,9 +307,9 @@
          * @param stateBefore
          * @returns {*[]}
          */
-        function getPickMove(playerIndex: number, stateBefore: IState): IMove {
+        function getPickMove(playerIndex, stateBefore) {
 
-            var playerRow: number = getGameBoardRows() + playerIndex;
+            var playerRow = getGameBoardRows() + playerIndex;
 
             // 1. make sure player did not sent any tile to board during this turn.
             var tilesSentToBoardThisTurn = getTilesSentToBoardThisTurn(stateBefore.deltas, playerRow);
@@ -411,28 +323,28 @@
             check(isMeldOk(stateBefore, stateBefore.board, playerIndex, true),
                 "[PICK] you should not mess up the board, if you want to pick" );
 
-            var tileToPick: ITile = stateBefore.trace.nexttile;
+            var tileToPick = stateBefore.trace.nexttile;
 
             // 3. construct move operations.
             var boardAfter = angular.copy(stateBefore.board);
-            boardAfter[playerRow].push(tileToPick.tileIndex);
+            boardAfter[playerRow].push(tileToPick);
             // sort tiles in hand by finding all sets and put sets at the front
             boardAfter[playerRow] = findAllSetInHand(boardAfter[playerRow], stateBefore);
 
-            var traceAfter: ITrace = angular.copy(stateBefore.trace);
-            traceAfter.nexttile = {tileIndex: tileToPick.tileIndex + 1};
+            var traceAfter = angular.copy(stateBefore.trace);
+            traceAfter.nexttile = tileToPick + 1;
 
-            var firstOperation: IOperation =  {setTurn: {turnIndex: getPlayerIndexOfNextTurn(playerIndex, stateBefore.trace.nplayers)}};
+            var firstOperation =  {setTurn: {turnIndex: getPlayerIndexOfNextTurn(playerIndex, stateBefore.trace.nplayers)}};
             if (traceAfter.nexttile === 106) {
                 firstOperation = {endMatch: {endMatchScores: getEndScores(-1, stateBefore)}};
             }
             return [
                 firstOperation,
-                {set: {key: 'type', value: MoveType.PICK}},
+                {set: {key: 'type', value: "PICK"}},
                 {set: {key: 'board', value: boardAfter}},
                 {set: {key: 'deltas', value: []}},     // pick move will clear delta history
                 {set: {key: 'trace', value: traceAfter}},
-                {setVisibility: {key: 'tile' + tileToPick, visibleToPlayerIndexes: [playerIndex]}}
+                {setVisibility: {key: 'tile' + tileToPick, visibleToPlayerIndices: [playerIndex]}}
             ];
         }
 
@@ -442,9 +354,9 @@
          * @param stateBefore
          * @returns {*[]}
          */
-        function getMeldMove(playerIndex: number, stateBefore: IState): IMove {
+        function getMeldMove(playerIndex, stateBefore) {
             var board = stateBefore.board;
-            var playerRow: number = getPlayerRow(playerIndex);
+            var playerRow = getPlayerRow(playerIndex);
             var deltas = stateBefore.deltas;
 
             // 0. check player has sent as least one tile from hand to board during this turn.
@@ -466,7 +378,7 @@
                 }
             }
 
-            var firstOperation: IOperation;
+            var firstOperation;
             if ( hasPlayerWon ) {
                 firstOperation = {endMatch: {endMatchScores: getEndScores(playerIndex, stateBefore)}};
             } else {
@@ -486,7 +398,7 @@
             traceAfter.initial[playerIndex] = true;
             return [
                 firstOperation,
-                {set: {key: 'type', value: MoveType.MELD}},
+                {set: {key: 'type', value: "MELD"}},
                 {set: {key: 'board', value: boardAfter}},
                 {set: {key: 'deltas', value: []}},     // meld move will clear delta history
                 {set: {key: 'trace', value: traceAfter}}
@@ -494,26 +406,23 @@
 
         }
 
-        function getSortMove(playerIndex: number, stateBefore: IState, sortType: string): IMove {
+        function getSortMove(playerIndex, stateBefore, sortType) {
             var boardAfter = angular.copy(stateBefore.board);
             var playerHand = boardAfter[getPlayerRow(playerIndex)];
-
-                if (sortType === SortMoveType.SCORE.toString() || sortType === SortMoveType.COLOR.toString())
-                {
-                  playerHand.sort(sortBy(sortType, stateBefore));
-                }
-                else if (sortType === SortMoveType.SET.toString())
-                {
-                  boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
-                }
-                else
-                {
-                  throw new Error("Unexpected sort type: " + sortType);
-                }
-
+            switch (sortType) {
+                case "score":
+                case "color":
+                    playerHand.sort(sortBy(sortType, stateBefore), stateBefore);
+                    break;
+                case "set":
+                    boardAfter[getPlayerRow(playerIndex)] = findAllSetInHand(playerHand, stateBefore);
+                    break;
+                default :
+                    throw new Error("Unexpected sort type: " + sortType);
+            }
             return [
                 {setTurn: {turnIndex: playerIndex}},
-                {set: {key: 'type', value: MoveType.SORT}},
+                {set: {key: 'type', value: "SORT"}},
                 {set: {key: 'sorttype', value: sortType}},
                 {set: {key: 'board', value: boardAfter}}
             ];
@@ -525,21 +434,21 @@
          * @param playerIndex
          * @param stateBefore
          */
-        function getSingleUndoMove(playerIndex: number, stateBefore: IState): IMove {
-            var deltas: DeltaHistory = stateBefore.deltas;
-            var delta:IDelta = deltas[deltas.length - 1];
+        function getSingleUndoMove(playerIndex, stateBefore) {
+            var deltas = stateBefore.deltas;
+            var delta = deltas[deltas.length - 1];
             // reverse the last delta, and then make that move
-            var deltaUndo: IDelta = {tileIndex: delta.tileIndex , from: delta.to, to: delta.from};
+            var deltaUndo = {tileIndex: delta.tileIndex , from: delta.to, to: delta.from};
             var moveUndo = getMoveMove(playerIndex, stateBefore, deltaUndo, true);
-            moveUndo[1].set.value = MoveType.UNDO;
+            moveUndo[1].set.value = "UNDO";
             return moveUndo;
         }
 
-        function getCombinedMove(playerIndex: number, stateBefore: IState, deltas: DeltaHistory): IMove {
+        function getCombinedMove(playerIndex, stateBefore, deltas) {
 
             check(deltas.length > 0, "no move to make");
 
-            var board: Board = angular.copy(stateBefore.board);
+            var board = angular.copy(stateBefore.board);
 
             for (var i = 0; i < deltas.length; i++) {
                 var delta = deltas[i];
@@ -548,11 +457,11 @@
                 board[delta.to.row][delta.to.col] = delta.tileIndex;
             }
 
-            var traceAfter: ITrace = angular.copy(stateBefore.trace);
+            var traceAfter = angular.copy(stateBefore.trace);
             traceAfter.initial[playerIndex] = true;
-            var move: IMove = [
+            var move = [
                 {setTurn: {turnIndex: playerIndex}},
-                {set: {key: 'type', value: MoveType.COMB}},
+                {set: {key: 'type', value: "COMB"}},
                 {set: {key: 'board', value: board}},
                 {set: {key: 'deltas', value: deltas}},
                 {set: {key: 'trace', value: traceAfter}}
@@ -560,8 +469,8 @@
             return move;
         }
 
-        function checkDelta(delta: IDelta, board: Board) {
-            check(delta.tileIndex !== undefined && delta.from !== undefined && delta.to !== undefined,
+        function checkDelta(delta, board) {
+            check(delta.tileIndex !== undefined && delta.from !== undefined, delta.to !== undefined,
                 "missing part for delta" );
 
             check (board[delta.from.row][delta.from.col] === delta.tileIndex,
@@ -572,18 +481,18 @@
         }
 
 
-        function getPossibleMoves(playerIndex: number, stateBefore: IState): IMove[] {
-            var possibleMoves: IMove[] = [];
+        function getPossibleMoves(playerIndex, stateBefore) {
+            var possibleMoves = [];
             possibleMoves.push(getPickMove(playerIndex, stateBefore));
 
-            var computerDeltas: DeltaHistory = [];
+            var computerDeltas = [];
             //var playerRow = getPlayerRow(playerIndex);
 
             // 1. find all sets in hand (group > set)
             var playerHand = angular.copy(stateBefore.board[getPlayerRow(playerIndex)]);
             var hand = angular.copy(playerHand);
 
-            var findResultOfGroupFirst = findSetsInHand(playerHand, stateBefore);
+            var findResultOfGroupFirst = findSetsInHand(playerHand, stateBefore, "groupFirst");
             var sets = findResultOfGroupFirst.sets;
 
             var ableToInitial = true;
@@ -630,20 +539,20 @@
             //}
 
             // 3. find proper position to place sets
-            var start: IPosition = {row: 0, col: 0};
+            var start = {row: 0, col: 0};
             for (var i = 0; i < sets.length; i++) {
                 var emptySlot = getNextEmptySlotInBoard(board, start, sets[i].length);
                 if (emptySlot === null) {
                     break;
                 }
                 for (var j = 0; j < sets[i].length; j++) {
-                    var delta: IDelta = {tileIndex: sets[i][j],
+                    var delta = {tileIndex: sets[i][j],
                         from: {row: getPlayerRow(playerIndex), col: hand.indexOf(sets[i][j])},
                         to: {row: emptySlot.row, col: emptySlot.col + j}
                     };
                     //console.log("aa: " + sets[i][j] + " , "  + hand);
                     computerDeltas.push(delta);
-                    board[delta.from.row][delta.from.col] = -1;
+                    board[delta.from.row][delta.from.to] = -1;
                     board[delta.to.row][delta.to.col] = delta.tileIndex;
                 }
                 start = {row: emptySlot.row, col: emptySlot.col + sets[i].length};
@@ -738,14 +647,14 @@
         //    return gameState["tile" + tileIndex];
         //}
 
-        function getScore(sets: number[][], gameState: IState): number {
-            var score: number = 0;
+        function getScore(sets, gameState) {
+            var score = 0;
             for (var i = 0; i < sets.length; i++) {
                 for (var j = 0; j < sets[i].length; j++) {
                     var tileIndex = sets[i][j];
-                    var tile: ITile = gameState["tile" + tileIndex];
+                    var tile = gameState["tile" + tileIndex];
                     // joker's score in initial meld is 0
-                    if (tile.color !== Color.joker.toString()) {
+                    if (tile.color !== "joker") {
                         score += tile.score;
                     }
                 }
@@ -753,7 +662,7 @@
             return score;
         }
 
-        function getNextEmptySlotInBoard(board: Board, start: IPosition, slot_size: number): IPosition {
+        function getNextEmptySlotInBoard(board, start, slot_size) {
             //if (start.row > getGameBoardRows() ) {
             //    return null;
             //}
@@ -774,15 +683,15 @@
                             emptyCount++;
                             if (c === 0 && emptyCount > slot_size) {
                                 // need one empty cell on right side to separate with next
-                                return <IPosition>{row: r, col: 0};
+                                return {row: r, col: 0};
                             }
                             if (c !== 0 && emptyCount > slot_size + 1) {
                                 // need one empty cell on both left side and right side
-                                return <IPosition>{row: r, col:  c + 1};
+                                return {row: r, col:  c + 1};
                             }
                             if (i === getGameBoardCols() - 1 && emptyCount > slot_size) {
                                 // need one empty cell on left side to separate set originally on left side
-                                return <IPosition>{row: r, col: c + 1};
+                                return {row: r, col: c + 1};
                             }
                         }
                         // continue in this row
@@ -792,11 +701,11 @@
             return null;
         }
 
-        function findSetsInHand(tiles: number[], state: IState) {
+        function findSetsInHand(tiles, state) {
             var remains = tiles;
-            var sets: number[][] = [];
-            var groups: number[][] = [];
-            var runs: number[][] = [];
+            var sets = [];
+            var groups = [];
+            var runs = [];
 
             groups = findAllGroups(tiles, state);
             if (groups.length !== 0) {
@@ -839,8 +748,8 @@
             return {sets: sets, remains: remains};
         }
 
-        function getRemainTilesFromSets(tiles: ITile[], sets: number[][]): ITile[] {
-            var result: ITile[] = angular.copy(tiles);
+        function getRemainTilesFromSets(tiles, sets) {
+            var result = angular.copy(tiles);
             for (var i = 0; i < sets.length; i++) {
                 for (var j = 0; j < sets[i].length; j++) {
                     var index = result.indexOf(sets[i][j]);
@@ -862,13 +771,13 @@
          * @param condition condition to be tested and expected to be true.
          * @param message error message when condition is not satisfied.
          */
-        function check(condition: boolean, message: string) {
+        function check(condition, message) {
             if (condition === false) {
                 throw new Error(message);
             }
         }
 
-        function checkPlayerIndex(playerIndex: number, nPlayers: number) {
+        function checkPlayerIndex(playerIndex, nPlayers) {
             check( playerIndex >= 0 && playerIndex < nPlayers,
                 "checkPlayerIndex, [playerIndex:  " + playerIndex + ", nPlayers: " + nPlayers);
         }
@@ -880,9 +789,9 @@
          * @param nPlayers number of players in current game.
          * @returns {number} index of next turn.
          */
-        function getPlayerIndexOfNextTurn(playerIndex: number, nPlayers: number): number {
+        function getPlayerIndexOfNextTurn(playerIndex, nPlayers) {
             checkPlayerIndex(playerIndex, nPlayers);
-            var index: number = 0;
+            var index = 0;
             if (playerIndex === nPlayers - 1) {
                 index = 0;
             } else {
@@ -897,8 +806,8 @@
          * @param nPlayers
          * @returns {Array}
          */
-        function getInitialBoard(nPlayers: number): Board {
-            var board: Board = [
+        function getInitialBoard(nPlayers) {
+            var board = [
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
@@ -906,11 +815,11 @@
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
-            var tileIndex: number = 0;
-            var tilesInHandInitially: number = 14;
+            var tileIndex = 0;
+            var tilesInHandInitially = 14;
             // push 14 tiles for each player
             for (var i = 0; i < nPlayers; i++) {
-                var row: number[] = [];
+                var row = [];
                 for (var j = 0; j < tilesInHandInitially; j++) {
                     row.push(tileIndex);
                     tileIndex++;
@@ -928,7 +837,7 @@
          * @param row
          * @param col
          */
-        function checkPositionWithinBoard(board: Board, row: number, col: number) {
+        function checkPositionWithinBoard(board, row, col) {
             check (row !== undefined && col !== undefined,
                 "checkPositionWithinBoard: (row, col) = (" + row + "," +  col + ") is undefined"
             );
@@ -947,26 +856,26 @@
          * @param index (int)
          * @returns {{color: *, score: *}}
          */
-        function getTileByIndex(index: number): ITile {
+        function getTileByIndex(index) {
             check (index >=0  && index < 106, "Illegal index");
-            var color: string;
-            var score: number;
+            var color;
+            var score;
             if (index === 104 || index === 105) {
-                color = Color.joker.toString();
+                color = "joker";
                 score = 0;
             } else {
                 if (index < 26) {
-                    color = Color.blue.toString();
+                    color = 'blue';
                 } else if (index < 52) {
-                    color = Color.red.toString();
+                    color = 'red';
                 } else if (index < 78) {
-                    color = Color.black.toString();
+                    color = 'black';
                 } else {
-                    color = Color.orange.toString();
+                    color = 'orange';
                 }
                 score = index % 13  + 1;
             }
-            return <ITile>{color: color, score: score};
+            return {color: color, score: score};
         }
 
         /**
@@ -977,9 +886,9 @@
          * @param row (array[int]) array of tile indices.
          * @returns {Array}
          */
-        function parseRowToSets(row: number[]): number[][] {
-            var result: number[][] = [];
-            var tileSet: number[] = [];
+        function parseRowToSets(row) {
+            var result = [];
+            var tileSet = [];
             for (var i = 0; i < row.length; i++) {
                 var tileIndex = row[i];
                 if (tileIndex === -1) {
@@ -1012,22 +921,22 @@
          * @param sets (array[{color: .., score: ..}])
          * @returns {boolean}
          */
-        function isRuns(sets: ITile[]): boolean {
+        function isRuns(sets) {
             var len = sets.length;
             if (len < 3 || len > 13) {
                 return false;
             }
-            var sameColor: string;
+            var sameColor;
             var expectScore = 0;
             for (var i = 0; i < len; i++) {
                 var color = sets[i].color;
                 var score = sets[i].score;
-                if (color !== Color.joker.toString()) {
+                if (color !== 'joker') {
                     // 1. check same color
                     if (sameColor === undefined) {
                         sameColor = color;
                     }
-                    if (sameColor !== color.toString()) {
+                    if (sameColor !== color) {
                         return false;
                     }
 
@@ -1056,17 +965,17 @@
          * @param sets (array[{color: .., score: ..}])
          * @returns {boolean}
          */
-        function isGroups(sets: ITile[]): boolean {
+        function isGroups(sets) {
             var length = sets.length;
             if (length !== 3 && length !== 4) {
                 return false;
             }
-            var sameScore: number = undefined;
-            var colors: string[] = [];
+            var sameScore;
+            var colors = [];
             for (var i = 0; i < length; i++) {
-                var color: string = sets[i].color;
-                var score: number = sets[i].score;
-                if (color !== Color.joker.toString()) {
+                var color = sets[i].color;
+                var score = sets[i].score;
+                if (color !== 'joker') {
                     // 1. check scores are the same
                     if (sameScore === undefined) {
                         // 1st score from the sets
@@ -1087,10 +996,10 @@
             return true;
         }
 
-        function getSetsOfTilesByIndex(setsOfTileIndices: number[], state:  IState): ITile[] {
-            var result: ITile[] = [];
+        function getSetsOfTilesByIndex(setsOfTileIndices, state) {
+            var result = [];
             for (var i = 0; i < setsOfTileIndices.length; i++) {
-                var tile: ITile = state["tile" + setsOfTileIndices[i]];
+                var tile = state["tile" + setsOfTileIndices[i]];
                 result.push(tile);
             }
             return result;
@@ -1108,8 +1017,8 @@
          * @param state
          * @returns {Array}
          */
-        function getEndScores(winnerIndex: number, state: IState): number[] {
-            var result: number[] = [];
+        function getEndScores(winnerIndex, state) {
+            var result = [];
             var nPlayers = state.trace.nplayers;
             if (winnerIndex === -1 ) {
                 for (var ii = 0; ii < nPlayers; ii++ ) {
@@ -1124,8 +1033,8 @@
                         var score = 0;
                         for (var j = 0; j < tilesRemaining.length; j++) {
                             // adding each tile's score
-                            var tile: ITile = state["tile" + tilesRemaining[j]];
-                            if (tile.color === Color.joker.toString()) {
+                            var tile = state["tile" + tilesRemaining[j]];
+                            if (tile.color === 'joker') {
                                 // joker tile's score is 30
                                 score -= 30;
                             } else {
@@ -1151,8 +1060,8 @@
          * @param initial
          * @returns {boolean}
          */
-        function isMeldOk(stateBefore: IState, board: Board, playerIndex: number, initial: boolean): boolean {
-            var setsInBoard: number[][] = [];
+        function isMeldOk(stateBefore, board, playerIndex, initial) {
+            var setsInBoard = [];
             // get all 'sets' in game board by scanning each row of board
             for (var i = 0; i < getGameBoardRows(); i++) {
                 setsInBoard = setsInBoard.concat(parseRowToSets(board[i]));
@@ -1212,8 +1121,8 @@
          * @param tilesSentThisTurn
          * @returns {number}
          */
-        function getInitialMeldScore(state: IState, setsInBoard: number[][], tilesSentThisTurn: ITile[]): number {
-            var score: number = 0;
+        function getInitialMeldScore(state, setsInBoard, tilesSentThisTurn) {
+            var score = 0;
             for (var i = 0; i < setsInBoard.length; i++) {
                 var tilesAllFromPlayer = true;
                 var setScore = 0;
@@ -1240,7 +1149,7 @@
          * @param state
          * @returns {boolean}
          */
-        function isGameOver(state: IState): boolean {
+        function isGameOver(state) {
             return getWinner(state.board, state.deltas) !== -1 || isTie(state);
         }
 
@@ -1252,9 +1161,9 @@
          * @param deltas
          * @returns {number}
          */
-        function getWinner(board: Board, deltas: DeltaHistory): number {
-            var hasLoser: boolean = false;
-            var winner: number = -1;
+        function getWinner(board, deltas) {
+            var hasLoser = false;
+            var winner = -1;
             // check each player's hand
             for (var i = getGameBoardRows(); i < board.length; i++) {
                 if (board[i].length === 0 && deltas.length === 0) {
@@ -1273,7 +1182,7 @@
          * or no player can make valid move any more.
          * @returns {boolean}
          */
-        function isTie(state: IState): boolean {
+        function isTie(state) {
             return state.trace.nexttile >= 106;
         }
 
@@ -1284,7 +1193,7 @@
          * @param deltas
          * @returns {boolean}
          */
-        function isTileSentToBoardInCurrentTurnByPlayer(tileIndex: number, playerIndex: number, deltas: DeltaHistory): boolean {
+        function isTileSentToBoardInCurrentTurnByPlayer(tileIndex, playerIndex, deltas) {
             var playerRow = getPlayerRow(playerIndex);
             for (var i = 0 ; i < deltas.length; i++) {
                 if (deltas[i].tileIndex === tileIndex &&
@@ -1300,15 +1209,15 @@
          * @param playerIndex
          * @returns {*}
          */
-        function getPlayerRow(playerIndex: number): number {
+        function getPlayerRow(playerIndex) {
             return getGameBoardRows() + playerIndex;
         }
 
-        function getGameBoardRows(): number {
+        function getGameBoardRows() {
             return CONFIG.GAME_BOARD_ROWS;
         }
 
-        function getGameBoardCols(): number {
+        function getGameBoardCols() {
             return CONFIG.GAME_BOARD_COLS;
         }
 
@@ -1319,8 +1228,8 @@
          * @param playerRow
          * @returns {Array} [tileIndex] sent to board by current player in this turn
          */
-        function getTilesSentToBoardThisTurn(deltas: DeltaHistory, playerRow: number): number[] {
-            var result: number[] = [];
+        function getTilesSentToBoardThisTurn(deltas, playerRow) {
+            var result = [];
             var count = 0;
             for (var i = 0; i < deltas.length; i++) {
                 var tileIndex = deltas[i].tileIndex;
@@ -1345,23 +1254,23 @@
          * @param state
          * @returns {Array}
          */
-        function findAllSetInHand(playerHand: number[], state: IState): number[] {
+        function findAllSetInHand(playerHand, state) {
             //if (playerHand.length === 0) {
             //    return playerHand;
             //}
             // try to find all groups in hand
-            var hand: number[] = angular.copy(playerHand);
+            var hand = angular.copy(playerHand);
 
             // 1. find all groups in hand
-            var groups: number[][] = findAllGroups(hand, state);
-            var handAfter: number[] = [];
+            var groups = findAllGroups(hand, state);
+            var handAfter = [];
             for (var i = 0; i < groups.length; i++) {
                 //console.log("group: " + groups[i]);
                 // append all valid groups
                 handAfter = handAfter.concat(groups[i]);
             }
             // 2. get the rest tiles in hand
-            var restTiles: ITile[] = [];
+            var restTiles = [];
             for (var ii = 0; ii < hand.length; ii++) {
                 if (handAfter.indexOf(hand[ii]) === -1) {
                     restTiles.push(hand[ii]);
@@ -1375,8 +1284,8 @@
                 handAfter = handAfter.concat(runs[j]);
             }
             for (var k = 0 ; k < restTiles.length; k++) {
-                if (handAfter.indexOf(restTiles[k].tileIndex) === -1) {
-                    handAfter.push(restTiles[k].tileIndex);
+                if (handAfter.indexOf(restTiles[k]) === -1) {
+                    handAfter.push(restTiles[k]);
                 }
             }
             return handAfter;
@@ -1388,22 +1297,22 @@
          * @param state
          * @returns {Array} each array is array of valid run [[1,2,3],[4,5,6]]
          */
-        function findAllRuns(tiles: ITile[], state: IState): number[][] {
+        function findAllRuns(tiles, state) {
             if (tiles.length === 0) {
                 return [];
             }
-            tiles.sort(sortBy(SortMoveType.COLOR.toString(), state));
-            var runs: number[][] = [];
-            var fast = getTileColorByIndex(tiles[0].tileIndex, state);
-            var sameColor: number[] = [];
+            tiles.sort(sortBy("color", state));
+            var runs = [];
+            var fast = getTileColorByIndex(tiles[0], state);
+            var sameColor = [];
             for (var i = 0; i < tiles.length; i++) {
-                var tileIndex = tiles[i].tileIndex;
+                var tileIndex = tiles[i];
                 var color = getTileColorByIndex(tileIndex, state);
                 if (color === fast ) {
                     sameColor.push(tileIndex);
                 }
                 if (color !== fast || i === tiles.length - 1) {
-                    var validRuns: number[][] = findRun(sameColor, state);
+                    var validRuns = findRun(sameColor, state);
                     if (validRuns.length > 0) {
                         runs = runs.concat(validRuns);
                     }
@@ -1414,13 +1323,13 @@
             return runs;
         }
 
-        function findRun(runCandidate: ITile[], state: IState): number[][] {
+        function findRun(runCandidate, state) {
             //console.log("same: " + runCandidate);
-            var validRuns: number[][] = [];
-            var scoreExpect = getTileScoreByIndex(runCandidate[0].tileIndex, state);
-            var consecutive: number[] = [];
+            var validRuns = [];
+            var scoreExpect = getTileScoreByIndex(runCandidate[0], state);
+            var consecutive = [];
             for (var i = 0; i < runCandidate.length; i++) {
-                var tileIndex = runCandidate[i].tileIndex;
+                var tileIndex = runCandidate[i];
                 var score = getTileScoreByIndex(tileIndex, state);
                 if (scoreExpect === score) {
                     consecutive.push(tileIndex);
@@ -1439,14 +1348,14 @@
             return validRuns;
         }
 
-        function findAllGroups(tiles: number[], state: IState): number[][] {
-            tiles.sort(sortBy(SortMoveType.SCORE.toString(), state));
-            var groups: number[][] = [];
-            var fast: number = getTileScoreByIndex(tiles[0], state);
-            var group: number[] = [];
+        function findAllGroups(tiles, state) {
+            tiles.sort(sortBy("score", state));
+            var groups = [];
+            var fast = getTileScoreByIndex(tiles[0], state);
+            var group = [];
             for (var i = 0; i < tiles.length; i++) {
                 var tileIndex = tiles[i];
-                var score: number = getTileScoreByIndex(tileIndex, state);
+                var score = getTileScoreByIndex(tileIndex, state);
                 if (score === fast) {
                     group.push(tileIndex);
                 }
@@ -1469,12 +1378,12 @@
          * @param state
          * @returns {Array}
          */
-        function findGroup(groupCandidate: number[], state: IState) {
-            var validGroups: number[][] = [];
-            var colors: Color[] = [];
-            var group: number[] = [];
+        function findGroup(groupCandidate, state) {
+            var validGroups = [];
+            var colors = [];
+            var group = [];
             for (var i = 0; i < groupCandidate.length; i++) {
-                var tileIndex: number = groupCandidate[i];
+                var tileIndex = groupCandidate[i];
                 var color = getTileColorByIndex(tileIndex, state);
                 if (colors.indexOf(color) === -1) {
                     // new color
@@ -1488,12 +1397,12 @@
             return validGroups;
         }
 
-        function getTileScoreByIndex(tileIndex: number, state: IState) {
+        function getTileScoreByIndex(tileIndex, state) {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].score;
         }
 
-        function getTileColorByIndex(tileIndex: number, state: IState) {
+        function getTileColorByIndex(tileIndex, state) {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].color;
         }
@@ -1506,11 +1415,11 @@
          * @param state
          * @returns {Function}
          */
-        function sortBy(type: string, state: IState) {
-            return function (tileIndexA: number, tileIndexB: number) {
-                var tileA: ITile = state["tile" + tileIndexA];
-                var tileB: ITile =  state["tile" + tileIndexB];
-                if (type === SortMoveType.SCORE.toString()) {
+        function sortBy(type, state) {
+            return function (tileIndexA, tileIndexB) {
+                var tileA = state["tile" + tileIndexA];
+                var tileB =  state["tile" + tileIndexB];
+                if (type === "score") {
                     return tileA.score - tileB.score;
                 } else {
                     // sort by "color"
