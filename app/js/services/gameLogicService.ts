@@ -3,7 +3,7 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira *
+ * @author: Agatha Oliveira *8
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -19,8 +19,14 @@ type Board = number[][];
  interface IDelta
  {
    tileIndex: number;
-   from: {row: number ,col: number };
-   to: {row: number, col: number};
+   from: IPosition;
+   to: IPosition;
+ }
+
+ interface IPosition
+ {
+   row: number;
+   col: number;
  }
 
  interface ITrace
@@ -689,7 +695,7 @@ type Board = number[][];
             return score;
         }
 
-        function getNextEmptySlotInBoard(board: Board, start, slot_size) {
+        function getNextEmptySlotInBoard(board: Board, start: IPosition, slot_size: number): IPosition {
             //if (start.row > getGameBoardRows() ) {
             //    return null;
             //}
@@ -730,9 +736,9 @@ type Board = number[][];
 
         function findSetsInHand(tiles, state: IState) {
             var remains = tiles;
-            var sets = [];
-            var groups = [];
-            var runs = [];
+            var sets: number[][] = [];
+            var groups: number[][] = [];
+            var runs: number[][] = [];
 
             groups = findAllGroups(tiles, state);
             if (groups.length !== 0) {
@@ -746,36 +752,10 @@ type Board = number[][];
                 remains = getRemainTilesFromSets(remains, runs);
             }
 
-
-            //if (option === "groupFirst") {
-            //    groups = findAllGroups(tiles, state);
-            //    if (groups.length !== 0) {
-            //        // group found in hand
-            //        remains = getRemainTilesFromSets(tiles, groups);
-            //        sets = sets.concat(groups);
-            //    }
-            //    runs = findAllRuns(remains, state);
-            //    if (runs.length !== 0) {
-            //        sets = sets.concat(runs);
-            //        remains = getRemainTilesFromSets(remains, runs);
-            //    }
-            //} else {
-            //    // "runFirst" option
-            //    runs = findAllRuns(tiles, state);
-            //    if (runs.length !== 0) {
-            //        remains = getRemainTilesFromSets(tiles, runs);
-            //        sets = sets.concat(runs);
-            //    }
-            //    groups = findAllGroups(remains, state);
-            //    if (groups.length !== 0) {
-            //        sets = sets.concat(groups);
-            //        remains = getRemainTilesFromSets(remains, groups);
-            //    }
-            //}
             return {sets: sets, remains: remains};
         }
 
-        function getRemainTilesFromSets(tiles, sets) {
+        function getRemainTilesFromSets(tiles, sets: number[][]) {
             var result = angular.copy(tiles);
             for (var i = 0; i < sets.length; i++) {
                 for (var j = 0; j < sets[i].length; j++) {
@@ -1289,7 +1269,7 @@ type Board = number[][];
             var hand = angular.copy(playerHand);
 
             // 1. find all groups in hand
-            var groups = findAllGroups(hand, state);
+            var groups: number[][] = findAllGroups(hand, state);
             var handAfter: number[] = [];
             for (var i = 0; i < groups.length; i++) {
                 //console.log("group: " + groups[i]);
@@ -1324,7 +1304,7 @@ type Board = number[][];
          * @param state
          * @returns {Array} each array is array of valid run [[1,2,3],[4,5,6]]
          */
-        function findAllRuns(tiles: number[], state: IState) {
+        function findAllRuns(tiles: number[], state: IState): number[][] {
             if (tiles.length === 0) {
                 return [];
             }

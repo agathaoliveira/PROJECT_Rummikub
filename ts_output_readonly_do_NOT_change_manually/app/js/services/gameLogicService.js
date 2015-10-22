@@ -3,7 +3,7 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira *
+ * @author: Agatha Oliveira *8
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -628,31 +628,6 @@
                     sets = sets.concat(runs);
                     remains = getRemainTilesFromSets(remains, runs);
                 }
-                //if (option === "groupFirst") {
-                //    groups = findAllGroups(tiles, state);
-                //    if (groups.length !== 0) {
-                //        // group found in hand
-                //        remains = getRemainTilesFromSets(tiles, groups);
-                //        sets = sets.concat(groups);
-                //    }
-                //    runs = findAllRuns(remains, state);
-                //    if (runs.length !== 0) {
-                //        sets = sets.concat(runs);
-                //        remains = getRemainTilesFromSets(remains, runs);
-                //    }
-                //} else {
-                //    // "runFirst" option
-                //    runs = findAllRuns(tiles, state);
-                //    if (runs.length !== 0) {
-                //        remains = getRemainTilesFromSets(tiles, runs);
-                //        sets = sets.concat(runs);
-                //    }
-                //    groups = findAllGroups(remains, state);
-                //    if (groups.length !== 0) {
-                //        sets = sets.concat(groups);
-                //        remains = getRemainTilesFromSets(remains, groups);
-                //    }
-                //}
                 return { sets: sets, remains: remains };
             }
             function getRemainTilesFromSets(tiles, sets) {
