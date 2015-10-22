@@ -792,7 +792,7 @@
             return null;
         }
 
-        function findSetsInHand(tiles: ITile[], state: IState) {
+        function findSetsInHand(tiles: number[], state: IState) {
             var remains = tiles;
             var sets: number[][] = [];
             var groups: number[][] = [];
@@ -1439,13 +1439,13 @@
             return validRuns;
         }
 
-        function findAllGroups(tiles: ITile[], state: IState): number[][] {
+        function findAllGroups(tiles: number[], state: IState): number[][] {
             tiles.sort(sortBy(SortMoveType.SCORE.toString(), state));
             var groups: number[][] = [];
-            var fast: number = getTileScoreByIndex(tiles[0].tileIndex, state);
+            var fast: number = getTileScoreByIndex(tiles[0], state);
             var group: number[] = [];
             for (var i = 0; i < tiles.length; i++) {
-                var tileIndex = tiles[i].tileIndex;
+                var tileIndex = tiles[i];
                 var score: number = getTileScoreByIndex(tileIndex, state);
                 if (score === fast) {
                     group.push(tileIndex);

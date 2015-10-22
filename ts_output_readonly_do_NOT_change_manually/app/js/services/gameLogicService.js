@@ -1278,10 +1278,10 @@ var Color = (function () {
             function findAllGroups(tiles, state) {
                 tiles.sort(sortBy(SortMoveType.SCORE.toString(), state));
                 var groups = [];
-                var fast = getTileScoreByIndex(tiles[0].tileIndex, state);
+                var fast = getTileScoreByIndex(tiles[0], state);
                 var group = [];
                 for (var i = 0; i < tiles.length; i++) {
-                    var tileIndex = tiles[i].tileIndex;
+                    var tileIndex = tiles[i];
                     var score = getTileScoreByIndex(tileIndex, state);
                     if (score === fast) {
                         group.push(tileIndex);
