@@ -2,7 +2,7 @@
     <div class="modal-header">
         <button class="btn close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" style="text-align: center">
-            {{'First time to play Rummikub?' | translate }}
+            {{'First time to play Rummikub?'}}
         </h4>
     </div>
     <div class="modal-body">
@@ -12,7 +12,7 @@
                 <carousel interval="0">
                     <slide ng-repeat="help in helps">
                         <img ng-src={{help.image}} style="margin: auto">
-                        <h6> {{ help.rule | translate}} </h6>
+                        <h6> {{ help.rule}} </h6>
                     </slide>
                 </carousel>
             </div>

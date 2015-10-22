@@ -12,8 +12,8 @@
 
     angular.module('myApp')
         .controller('GameCtrl', [
-        '$scope', '$log', '$window', '$animate', '$timeout', '$translate', 'gameLogicService', 'gameAIService', 'CONFIG',
-        function($scope, $log, $window,  $animate, $timeout, $translate, gameLogicService, gameAIService, CONFIG) {
+        '$scope', '$log', '$window', '$animate', '$timeout', 'gameLogicService', 'gameAIService', 'CONFIG',
+        function($scope, $log, $window,  $animate, $timeout, gameLogicService, gameAIService, CONFIG) {
 
             /*************************************************************
              *********************   Configuration  *********************/

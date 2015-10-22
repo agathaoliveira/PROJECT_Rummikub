@@ -76,8 +76,8 @@
 
         <div id="info-panel" class="row text-primary" ng-if="true">
             <i class="fa fa-volume-up"></i>
-            {{info || "debug" | translate}}
-            <div id="rotate" class="text-primary" style="font-size: 4vh">{{'ROTATE_INFO' | translate}}</div>
+            {{info || "debug"}}
+            <div id="rotate" class="text-primary" style="font-size: 4vh">{{'ROTATE_INFO'}}</div>
         </div>
 
         <div id="player-panel" class="row" style="border: groove;" ng-click="curPlayerAreaClicked()">
@@ -120,43 +120,43 @@
             <!--<div class="info col-xs-12" style="font-size: 1.5vw; padding-bottom: 0">-->
             <div ng-repeat="i in [] | range: state.trace.nplayers" class="col-xs-12 text-info" style="font-size: 1.5vw; padding-bottom: 0">
                 <p ng-if="i == turnIndex" class="text-info">
-                    <strong>{{'ME' | translate}}</strong><br>{{board[rows + i].length}}
+                    <strong>{{'ME'}}</strong><br>{{board[rows + i].length}}
                 </p>
                 <p ng-if="i != turnIndex" class="text-warning">
-                    <strong>{{'P' + i | translate}}</strong><br>{{board[rows + i].length}}
+                    <strong>{{'P' + i}}</strong><br>{{board[rows + i].length}}
                 </p>
             </div>
             <!--</div>-->
 
             <div class="col-xs-12" ng-show="!tileSentToBoard">
-                <button id="pickbtn" type="button" class="btn btn-info btn-circle" ng-click="pickBtnClicked()">{{'PICK' | translate}}</button>
+                <button id="pickbtn" type="button" class="btn btn-info btn-circle" ng-click="pickBtnClicked()">{{'PICK'}}</button>
             </div>
 
             <div class="col-xs-12" ng-show="tileSentToBoard">
-                <button id="meldbtn" type="button" class="btn btn-warning btn-circle"  ng-click="meldBtnClicked()">{{'MELD' | translate}}</button>
+                <button id="meldbtn" type="button" class="btn btn-warning btn-circle"  ng-click="meldBtnClicked()">{{'MELD'}}</button>
             </div>
 
             <div class="col-xs-12">
-                <button id="sortbtn" type="button" class="btn btn-default btn-circle" ng-disabled="sortDisabled" ng-click="setSortTypeBtnClicked()">{{sortType.toUpperCase() || "sort" | translate}}</button>
+                <button id="sortbtn" type="button" class="btn btn-default btn-circle" ng-disabled="sortDisabled" ng-click="setSortTypeBtnClicked()">{{sortType.toUpperCase() || "sort"}}</button>
             </div>
 
             <div class="col-xs-12">
-                <button id="undobtn" type="button" class="btn btn-success btn-circle" ng-click="undoBtnClicked()">{{'UNDO' | translate}}</button>
+                <button id="undobtn" type="button" class="btn btn-success btn-circle" ng-click="undoBtnClicked()">{{'UNDO'}}</button>
             </div>
 
             <div class="col-xs-12">
                 <button id="undoallbtn" type="button" class="btn btn-danger btn-circle" ng-click="undoAllBtnClicked()">
-                    <p style="font-size: 1vw;"> {{'UNDO_ALL' | translate}}</p>
+                    <p style="font-size: 1vw;"> {{'UNDO_ALL'}}</p>
                 </button>
             </div>
 
             <div class="col-xs-12" ng-controller="HelpCtrl">
                 <div ng-include="'template/help.html'"></div>
-                <button class="btn btn-primary btn-circle" ng-click="open()">{{'HELP' | translate}}</button>
+                <button class="btn btn-primary btn-circle" ng-click="open()">{{'HELP'}}</button>
             </div>
 
             <div class="col-xs-12" style="font-size: 1.5vw">
-                <p id="tiles-left">{{106 - state.trace.nexttile}} {{"TILES_LEFT" | translate }}</p>
+                <p id="tiles-left">{{106 - state.trace.nexttile}} {{"TILES_LEFT"}}</p>
             </div>
 
         </div><!-- /.row -->
