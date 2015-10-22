@@ -209,6 +209,7 @@ var Color;
                 var shuffleKeys = { keys: [] };
                 for (var tileIndex = 0; tileIndex < 106; tileIndex++) {
                     tiles[tileIndex] = { key: "tile" + tileIndex, value: getTileByIndex(tileIndex) };
+                    move.push({ set: tiles[tileIndex] });
                     shuffleKeys.keys[tileIndex] = 'tile' + tileIndex;
                 }
                 // 3.2. initialize tile visibility
@@ -220,7 +221,6 @@ var Color;
                         visibility[tileIndex] = { key: 'tile' + tileIndex, visibleToPlayerIndexes: [ii] };
                     }
                 }
-                move = move.concat(tiles);
                 move.push(shuffleKeys);
                 move = move.concat(visibility);
                 return move;

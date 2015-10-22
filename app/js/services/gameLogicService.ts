@@ -239,6 +239,7 @@
             var shuffleKeys:IShuffle = {keys: []};
             for (var tileIndex = 0; tileIndex< 106; tileIndex++) {
                 tiles[tileIndex] = {key: "tile" + tileIndex, value: getTileByIndex(tileIndex)};
+                move.push({set: tiles[tileIndex]});
                 shuffleKeys.keys[tileIndex] = 'tile' + tileIndex;
             }
 
@@ -252,7 +253,6 @@
                 }
             }
 
-            move = move.concat(tiles);
             move.push(shuffleKeys);
             move = move.concat(visibility);
             return move;
@@ -1458,7 +1458,7 @@
          *
          * @param type
          * @param state
-         * @returns {Function} 
+         * @returns {Function}
          */
         function sortBy(type: SortMoveType, state: IState) {
             return function (tileIndexA: number, tileIndexB: number) {
