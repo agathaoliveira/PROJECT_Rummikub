@@ -223,7 +223,7 @@ var Color;
                         visibilityOperations.push({ setVisibility: visibility[tileIndex] });
                     }
                 }
-                move.push(shuffleKeys);
+                move.push({ shuffle: shuffleKeys });
                 move = move.concat(visibilityOperations);
                 return move;
             }
