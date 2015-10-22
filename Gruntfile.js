@@ -5,38 +5,6 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        jshint: {
-            options: {
-                curly: true,
-                eqeqeq: true,
-                eqnull: true,
-                browser: true,
-                strict: true,
-                undef: true,
-                unused: true,
-                bitwise: true,
-                forin: true,
-                freeze: true,
-                latedef: true,
-                noarg: true,
-                nocomma: true,
-                nonbsp: true,
-                nonew: true,
-                notypeof: true,
-                jasmine: true,
-                jquery: true,
-                globals: {
-                    module: false, // for Gruntfile.js
-                    exports: false, // for protractor.conf.js
-                    inject: false, // testing angular
-                    angular: false,
-                    console: false,
-                    browser: false, element: false, by: false, // Protractor
-                },
-            },
-            all: ['Gruntfile.js', 'test/karma.conf.js', 'test/protractor.conf.js',
-                'app/js/*/*.js','test/unit/*.js' ,'test/e2e/*tests.js','languages/*.js']
-        },
         karma: {
             unit: {
                 configFile: 'test/karma.conf.js',
@@ -102,7 +70,7 @@ module.exports = function(grunt) {
                         'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js',
                         'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-touch.min.js',
                         'http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js',
-                        'http://yoav-zibin.github.io/emulator/dist/turnBasedServices.2.min.js',
+                        'http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.min.js',
                         'dist/everything.min.js',
 
                         'http://yoav-zibin.github.io/emulator/main.css',
@@ -175,7 +143,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-protractor-runner');
 
     // Default task(s).
-    grunt.registerTask('default', ['jshint', 'karma',
+    grunt.registerTask('default', ['karma',
         'concat', 'uglify', 'cssmin',
         'processhtml', 'manifest',
         'http-server', 'protractor']);

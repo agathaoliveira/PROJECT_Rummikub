@@ -10,7 +10,7 @@
 
 'use strict';
 
-angular.module('myApp',['ngTouch', 'ui.bootstrap'])
+angular.module('myApp',['ngTouch', 'ui.bootstrap', 'gameServices'])
     .constant("CONFIG", {
         GAME_BOARD_ROWS: 6,
         GAME_BOARD_COLS: 18,

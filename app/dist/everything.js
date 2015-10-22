@@ -36,10 +36,8 @@ angular.module('myApp',['ngTouch', 'ui.bootstrap'])
 
     angular.module('myApp')
         .controller('GameCtrl', [
-        '$scope', '$log', '$window', '$animate', '$timeout', '$translate', 'stateService', 'gameService',
-            'dragAndDropService', 'gameLogicService', 'gameAIService', 'CONFIG',
-        function($scope, $log, $window,  $animate, $timeout, $translate, stateService ,gameService,
-                 dragAndDropService, gameLogicService, gameAIService, CONFIG) {
+        '$scope', '$log', '$window', '$animate', '$timeout', '$translate', 'gameLogicService', 'gameAIService', 'CONFIG',
+        function($scope, $log, $window,  $animate, $timeout, $translate, gameLogicService, gameAIService, CONFIG) {
 
             /*************************************************************
              *********************   Configuration  *********************/
@@ -820,7 +818,7 @@ angular.module('myApp').controller('CarouselDemoCtrl',['$scope', function ($scop
      *  3 - setDelta: {set: {key: 'deltas', value: [...]}}
      *  4 - setTrace: {set: {key: 'trace', value: {}}
      * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndices: [1]}},
-     *  
+     *
      *
      * II. Operations: the operation player chooses for current move.
      *
