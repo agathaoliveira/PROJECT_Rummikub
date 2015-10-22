@@ -12,7 +12,7 @@ type Board = number[][];
 
  interface IState{
    board?: Board;
-   delta?: IDelta;
+   deltas?: IDelta[];
    trace?: ITrace;
  }
 
@@ -141,7 +141,7 @@ type Board = number[][];
                 );
             }
             var expectedMove: IMove;
-            var deltas;
+            var deltas: IDelta[];
             switch (moveType) {
                 case "INIT":
                     var nPlayers = actualMove[2].set.value.nplayers;
@@ -181,20 +181,20 @@ type Board = number[][];
          * @param nPlayers (int) number of players in current game.
          * @returns {*[]} array of operations in initial move.
          */
-        function getInitialMove(nPlayers) {
+        function getInitialMove(nPlayers: number): IMove {
             // 1. make sure 2 - 4 players are playing the game.
             check(nPlayers <= 4 && nPlayers >= 0,
                 "INIT: nPlayers = " + nPlayers + " is given, but only 2 - 4 players are allowed."
             );
 
             // Initially, set 'initial' to false, i.e. no player has made initial meld
-            var initial = [];
+            var initial: IMove = [];
             for (var i = 0; i < nPlayers; i++) {
                 initial.push(false);
             }
             // 2. construct the move
             var nTilesPerPlayerInitially = 14;
-            var move = [
+            var move: IMove = [
                 {setTurn: {turnIndex: 0}},
                 {set: {key: 'type', value: "INIT"}},
                 {set: {key: 'trace', value: {
@@ -206,15 +206,15 @@ type Board = number[][];
             ];
 
             // 3.1. initialize game tiles and shuffle keys
-            var tiles = [];
-            var shuffleKeys = [];
+            var tiles: IOperation[] = [];
+            var shuffleKeys: string[] = [];
             for (var tileIndex = 0; tileIndex< 106; tileIndex++) {
                 tiles[tileIndex] = {set: {key: "tile" + tileIndex, value: getTileByIndex(tileIndex)}};
                 shuffleKeys[tileIndex] = 'tile' + tileIndex;
             }
 
             // 3.2. initialize tile visibility
-            var visibility = [];
+            var visibility: IOperation[] = [];
             for (var ii = 0; ii < nPlayers; ii++) {
                 for (var jj = 0; jj < nTilesPerPlayerInitially; jj++) {
                     // each player has 14 tiles in hand initially
@@ -1394,10 +1394,10 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function findGroup(groupCandidate, state: IState) {
-            var validGroups = [];
-            var colors = [];
-            var group = [];
+        function findGroup(groupCandidate: number[], state: IState) {
+            var validGroups: number[][] = [];
+            var colors: string[] = [];
+            var group: number[] = [];
             for (var i = 0; i < groupCandidate.length; i++) {
                 var tileIndex = groupCandidate[i];
                 var color = getTileColorByIndex(tileIndex, state);
@@ -1413,12 +1413,12 @@ type Board = number[][];
             return validGroups;
         }
 
-        function getTileScoreByIndex(tileIndex, state: IState) {
+        function getTileScoreByIndex(tileIndex: number, state: IState) {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].score;
         }
 
-        function getTileColorByIndex(tileIndex, state: IState) {
+        function getTileColorByIndex(tileIndex: number, state: IState) {
             check (state["tile" + tileIndex] !== undefined, "undefined tile: tile" + tileIndex);
             return state["tile" + tileIndex].color;
         }
