@@ -49,7 +49,7 @@
      *  2 - setBoard: {set: {key: 'board', value: [[..]]}}
      *  3 - setDelta: {set: {key: 'deltas', value: [...]}}
      *  4 - setTrace: {set: {key: 'trace', value: {}}
-     * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndices: [1]}},
+     * *5 - setVisibility: {setVisibility: {key: 'tile28', visibleToPlayerIndexes: [1]}},
      *
      *
      * II. Operations: the operation player chooses for current move.
@@ -193,7 +193,7 @@
                     for (var jj = 0; jj < nTilesPerPlayerInitially; jj++) {
                         // each player has 14 tiles in hand initially
                         tileIndex = ii * nTilesPerPlayerInitially + jj;
-                        visibility[tileIndex] = { setVisibility: { key: 'tile' + tileIndex, visibleToPlayerIndices: [ii] } };
+                        visibility[tileIndex] = { setVisibility: { key: 'tile' + tileIndex, visibleToPlayerIndexes: [ii] } };
                     }
                 }
                 move = move.concat(tiles);
@@ -265,7 +265,7 @@
                     { set: { key: 'type', value: moveTypeAfter } },
                     { set: { key: 'board', value: boardAfter } },
                     { set: { key: 'deltas', value: deltasAfter } },
-                    { setVisibility: { key: 'tile' + tileToMove, visibleToPlayerIndices: visibility } }
+                    { setVisibility: { key: 'tile' + tileToMove, visibleToPlayerIndexes: visibility } }
                 ];
             }
             /**
@@ -301,7 +301,7 @@
                     { set: { key: 'board', value: boardAfter } },
                     { set: { key: 'deltas', value: [] } },
                     { set: { key: 'trace', value: traceAfter } },
-                    { setVisibility: { key: 'tile' + tileToPick, visibleToPlayerIndices: [playerIndex] } }
+                    { setVisibility: { key: 'tile' + tileToPick, visibleToPlayerIndexes: [playerIndex] } }
                 ];
             }
             /**
