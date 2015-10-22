@@ -3,7 +3,7 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira
+ * @author: Agatha Oliveira *
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -24,8 +24,16 @@ type Board = number[][];
  }
 
  interface ITrace
- {}
+ {
+   nexttile?: number;
+   nplayers?: number;
+ }
 
+ interface ITileInfo
+ {
+   color?: string;
+   score?: number;
+ }
 (function () {
 
     'use strict';
@@ -838,7 +846,7 @@ type Board = number[][];
             var tilesInHandInitially = 14;
             // push 14 tiles for each player
             for (var i = 0; i < nPlayers; i++) {
-                var row = [];
+                var row: number[] = [];
                 for (var j = 0; j < tilesInHandInitially; j++) {
                     row.push(tileIndex);
                     tileIndex++;
@@ -875,7 +883,7 @@ type Board = number[][];
          * @param index (int)
          * @returns {{color: *, score: *}}
          */
-        function getTileByIndex(index: number) {
+        function getTileByIndex(index: number): ITileInfo {
             check (index >=0  && index < 106, "Illegal index");
             var color: string;
             var score: number;
@@ -905,9 +913,9 @@ type Board = number[][];
          * @param row (array[int]) array of tile indices.
          * @returns {Array}
          */
-        function parseRowToSets(row: number) {
-            var result = [];
-            var tileSet = [];
+        function parseRowToSets(row: number[]): number[][] {
+            var result: number[][] = [];
+            var tileSet: number[] = [];
             for (var i = 0; i < row.length; i++) {
                 var tileIndex = row[i];
                 if (tileIndex === -1) {
@@ -940,12 +948,12 @@ type Board = number[][];
          * @param sets (array[{color: .., score: ..}])
          * @returns {boolean}
          */
-        function isRuns(sets) {
+        function isRuns(sets: ITileInfo[]): boolean {
             var len = sets.length;
             if (len < 3 || len > 13) {
                 return false;
             }
-            var sameColor;
+            var sameColor: string = undefined;
             var expectScore = 0;
             for (var i = 0; i < len; i++) {
                 var color = sets[i].color;
@@ -984,13 +992,13 @@ type Board = number[][];
          * @param sets (array[{color: .., score: ..}])
          * @returns {boolean}
          */
-        function isGroups(sets) {
+        function isGroups(sets: ITileInfo[]): boolean {
             var length = sets.length;
             if (length !== 3 && length !== 4) {
                 return false;
             }
-            var sameScore;
-            var colors = [];
+            var sameScore: number = undefined;
+            var colors: string[] = [];
             for (var i = 0; i < length; i++) {
                 var color = sets[i].color;
                 var score = sets[i].score;
@@ -1015,7 +1023,7 @@ type Board = number[][];
             return true;
         }
 
-        function getSetsOfTilesByIndex(setsOfTileIndices, state) {
+        function getSetsOfTilesByIndex(setsOfTileIndices: number[], state: IState) {
             var result = [];
             for (var i = 0; i < setsOfTileIndices.length; i++) {
                 var tile = state["tile" + setsOfTileIndices[i]];
@@ -1036,8 +1044,8 @@ type Board = number[][];
          * @param state
          * @returns {Array}
          */
-        function getEndScores(winnerIndex, state: IState) {
-            var result = [];
+        function getEndScores(winnerIndex: number, state: IState): number[] {
+            var result: number[] = [];
             var nPlayers = state.trace.nplayers;
             if (winnerIndex === -1 ) {
                 for (var ii = 0; ii < nPlayers; ii++ ) {
@@ -1080,7 +1088,7 @@ type Board = number[][];
          * @returns {boolean}
          */
         function isMeldOk(stateBefore: IState, board: Board, playerIndex: number, initial: boolean): boolean {
-            var setsInBoard = [];
+            var setsInBoard: number[][] = [];
             // get all 'sets' in game board by scanning each row of board
             for (var i = 0; i < getGameBoardRows(); i++) {
                 setsInBoard = setsInBoard.concat(parseRowToSets(board[i]));
@@ -1140,7 +1148,7 @@ type Board = number[][];
          * @param tilesSentThisTurn
          * @returns {number}
          */
-        function getInitialMeldScore(state: IState, setsInBoard, tilesSentThisTurn): number {
+        function getInitialMeldScore(state: IState, setsInBoard: number[][], tilesSentThisTurn: number[]): number {
             var score = 0;
             for (var i = 0; i < setsInBoard.length; i++) {
                 var tilesAllFromPlayer = true;
@@ -1180,7 +1188,7 @@ type Board = number[][];
          * @param deltas
          * @returns {number}
          */
-        function getWinner(board: Board, deltas): number {
+        function getWinner(board: Board, deltas: IDelta[]): number {
             var hasLoser = false;
             var winner = -1;
             // check each player's hand
@@ -1212,7 +1220,7 @@ type Board = number[][];
          * @param deltas
          * @returns {boolean}
          */
-        function isTileSentToBoardInCurrentTurnByPlayer(tileIndex: number, playerIndex, deltas): boolean {
+        function isTileSentToBoardInCurrentTurnByPlayer(tileIndex: number, playerIndex: number, deltas: IDelta[]): boolean {
             var playerRow = getPlayerRow(playerIndex);
             for (var i = 0 ; i < deltas.length; i++) {
                 if (deltas[i].tileIndex === tileIndex &&
@@ -1247,8 +1255,8 @@ type Board = number[][];
          * @param playerRow
          * @returns {Array} [tileIndex] sent to board by current player in this turn
          */
-        function getTilesSentToBoardThisTurn(deltas: IDelta[], playerRow: number) {
-            var result = [];
+        function getTilesSentToBoardThisTurn(deltas: IDelta[], playerRow: number): number[] {
+            var result: number[] = [];
             var count = 0;
             for (var i = 0; i < deltas.length; i++) {
                 var tileIndex = deltas[i].tileIndex;

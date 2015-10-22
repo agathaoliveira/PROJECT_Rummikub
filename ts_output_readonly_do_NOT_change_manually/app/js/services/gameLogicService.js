@@ -3,7 +3,7 @@
  * ----------------------------------------------------------
  * Game logic for Rummikub game.
  *
- * @author: Agatha Oliveira
+ * @author: Agatha Oliveira *
  * @date  : 2015.02.14
  * ----------------------------------------------------------
  */
@@ -823,7 +823,7 @@
                 if (len < 3 || len > 13) {
                     return false;
                 }
-                var sameColor;
+                var sameColor = undefined;
                 var expectScore = 0;
                 for (var i = 0; i < len; i++) {
                     var color = sets[i].color;
@@ -865,7 +865,7 @@
                 if (length !== 3 && length !== 4) {
                     return false;
                 }
-                var sameScore;
+                var sameScore = undefined;
                 var colors = [];
                 for (var i = 0; i < length; i++) {
                     var color = sets[i].color;
