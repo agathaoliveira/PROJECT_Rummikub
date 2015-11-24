@@ -10,8 +10,18 @@
 
     <link rel="stylesheet" href="http://yoav-zibin.github.io/emulator/main.css">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="HTTP://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="dist/game.css">
+
+    <!-- place js files here to speed page loading -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-touch.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
+    <script src="dist/everything.min.js"></script>
+    <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
+    <!-- /build -->
+
 </head>
 
 <body ng-cloak ng-controller="GameCtrl">
@@ -151,7 +161,7 @@
             </div>
 
             <div class="col-xs-12" ng-controller="HelpCtrl">
-                <div ng-include="'template/help.html'"></div>
+                <div ng-include="'http://agathaoliveira.github.io/PROJECT_Rummikub/app/template/help.html'"></div>
                 <button class="btn btn-primary btn-circle" ng-click="open()">{{'HELP'}}</button>
             </div>
 
@@ -163,13 +173,6 @@
     </div><!-- /#menuArea col-xs-1 -->
 </div><!-- #game /.row -->
 
-<!-- place js files here to speed page loading -->
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-touch.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
-<script src="dist/everything.min.js"></script>
-<script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
-<!-- /build -->
 </body>
 
 </html>
