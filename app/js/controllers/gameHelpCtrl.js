@@ -49,11 +49,11 @@ angular.module('myApp').controller('ModalInstanceCtrl',['$scope','$modalInstance
 angular.module('myApp').controller('CarouselDemoCtrl',['$scope', function ($scope) {
     'use strict';
     $scope.helps = [
-        {"image": "img/valid.png", "rule": 'RULE_1'},
-        {"image": "img/valid-runs.png", "rule": 'RULE_2'},
-        {"image": "img/valid-groups.png", "rule": 'RULE_3'},
-        {"image": "img/valid-joker.png", "rule": 'RULE_4'},
-        {"image": "img/valid-run2.png", "rule": 'RULE_5'}
+        {"image": "img/valid.png", "rule": 'Meld tiles in your hand in runs or groups'},
+        {"image": "img/valid-runs.png", "rule": 'Valid run: at least 3 tiles, same color, consecutive numbers'},
+        {"image": "img/valid-groups.png", "rule": 'Valid group: at least 3 tiles, different colors, same number'},
+        {"image": "img/valid-joker.png", "rule": 'Use joker tile to substitute'},
+        {"image": "img/valid-run2.png", "rule": 'To achieve first time meld, tiles sent should sum to 30 scores'}
     ];
     $scope.myInterval = 0;
 }]);
