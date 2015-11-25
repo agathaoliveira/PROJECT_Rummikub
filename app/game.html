@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Rummikub">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="icon" href="img/favicon.ico" sizes="32x32">
     <title>Rummikub</title>
 
@@ -46,8 +46,8 @@
 
 <body ng-cloak ng-controller="GameCtrl">
 <div id="game" class="row">
-    <div id="gameArea" class="col-xs-12">
-      <div class="col-xs-11" style="padding: 0 {{gameAreaPaddingPercent * 100}}%;">
+    <div id="gameArea" class="col-xs-11" style="padding: 0 {{gameAreaPaddingPercent * 100}}%;">
+      <!--<div id="gameAreaNew" class="col-xs-11" >-->
         <div class="tile-wrapper"
              id="MyDrag" style="display: none; position: absolute;width: 0; padding-bottom: 0;z-index: 106;background-color: yellow;">
             <div class="tile">
@@ -192,7 +192,7 @@
 
         </div><!-- /.row -->
     </div><!-- /#menuArea col-xs-1 -->
-  </div>
+  <!--</div>-->
 </div><!-- #game /.row -->
 
 </body>

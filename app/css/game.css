@@ -43,6 +43,7 @@
 #menuArea .row {
    height: 100%;
    font-size: 2.5vw;
+   z-index: -1;
 }
 
 #menuArea > .row > .col-xs-12{
