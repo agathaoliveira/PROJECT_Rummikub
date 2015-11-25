@@ -410,7 +410,8 @@
                         gameService.makeMove(move);
                         // reset sort
                         $scope.sortType = "sort";
-                        $scope.info = "pick one tile";
+                        $scope.info = "PICK_ONE";
+
                     } catch (e) {
                         logout(e.message);
                         $scope.info = e.message;

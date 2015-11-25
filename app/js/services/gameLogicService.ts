@@ -10,7 +10,7 @@
  * ----------------------------------------------------------
  */
 
-type Board = number[][];
+type Board = number[][]; 
 
  interface IState{
    board?: Board;
@@ -351,14 +351,14 @@ type Board = number[][];
             // 1. make sure player did not sent any tile to board during this turn.
             var tilesSentToBoardThisTurn = getTilesSentToBoardThisTurn(stateBefore.deltas, playerRow);
             check(tilesSentToBoardThisTurn.length === 0,
-                "[PICK] you cannot pick, since you sent tile to board."
+                "PICK_1"
             );
 
             // 2. player is able to replace tiles throughout the board,
             //    but before picking, he should restore the 'able-to-meld' state
             //    and retrieve all tiles he sent to board in this turn back to his hand.
             check(isMeldOk(stateBefore, stateBefore.board, playerIndex, true),
-                "[PICK] you should not mess up the board, if you want to pick" );
+                "PICK_2" );
 
             var tileToPick = stateBefore.trace.nexttile;
 
@@ -399,12 +399,12 @@ type Board = number[][];
             // 0. check player has sent as least one tile from hand to board during this turn.
             var tilesSentToBoardThisTurn = getTilesSentToBoardThisTurn(deltas, playerRow);
             check ( tilesSentToBoardThisTurn.length !== 0,
-                "[MELD] you cannot meld since no tiles sent to board in this turn"
+                "MELD_2"
             );
 
             // 1. check all sets in board are valid sets (runs or groups)
             check (isMeldOk(stateBefore, board, playerIndex ,stateBefore.trace.initial[playerIndex]),
-                "[MELD] meld is not ok" );
+                "MELD_1" );
 
             // 2. check winner: player only has -1 tile in hand, he wins
             var hasPlayerWon = true;
@@ -979,7 +979,7 @@ type Board = number[][];
                 var tilesSentToBoardThisTurn = getTilesSentToBoardThisTurn(stateBefore.deltas, getPlayerRow(playerIndex));
                 var score = getInitialMeldScore(stateBefore, setsInBoard, tilesSentToBoardThisTurn);
                 check(score >= 30,
-                    "[MELD]: you must score at least 30 (without joker tile) for your initial meld" );
+                    "MELD_3" );
             }
             return true;
         }
