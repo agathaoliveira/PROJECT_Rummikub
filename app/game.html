@@ -46,7 +46,8 @@
 
 <body ng-cloak ng-controller="GameCtrl">
 <div id="game" class="row">
-    <div id="gameArea" class="col-xs-11" style="padding: 0 {{gameAreaPaddingPercent * 100}}%;">
+    <div id="gameArea" class="col-xs-12">
+      <div class="col-xs-11" style="padding: 0 {{gameAreaPaddingPercent * 100}}%;">
         <div class="tile-wrapper"
              id="MyDrag" style="display: none; position: absolute;width: 0; padding-bottom: 0;z-index: 106;background-color: yellow;">
             <div class="tile">
@@ -159,19 +160,19 @@
             <!--</div>-->
 
             <div class="col-xs-12" ng-show="!tileSentToBoard">
-                <button id="pickbtn" type="button" class="btn btn-info btn-circle" ng-click="pickBtnClicked()">{{'PICK'| translate}}</button>
+                <button id="pickbtn" type="button" class="btn btn-info btn-circle" ng-click="pickBtnClicked()"><p style="font-size: 1vw;">{{'PICK'| translate}}</p></button>
             </div>
 
             <div class="col-xs-12" ng-show="tileSentToBoard">
-                <button id="meldbtn" type="button" class="btn btn-warning btn-circle"  ng-click="meldBtnClicked()">{{'MELD'| translate}}</button>
+                <button id="meldbtn" type="button" class="btn btn-warning btn-circle"  ng-click="meldBtnClicked()"><p style="font-size: 1vw;">{{'MELD'| translate}}</p></button>
             </div>
 
             <div class="col-xs-12">
-                <button id="sortbtn" type="button" class="btn btn-default btn-circle" ng-disabled="sortDisabled" ng-click="setSortTypeBtnClicked()">{{sortType.toUpperCase() || "sort" | translate}}</button>
+                <button id="sortbtn" type="button" class="btn btn-default btn-circle" ng-disabled="sortDisabled" ng-click="setSortTypeBtnClicked()"><p style="font-size: 1vw;">{{sortType.toUpperCase() || "sort" | translate}}</p></button>
             </div>
 
             <div class="col-xs-12">
-                <button id="undobtn" type="button" class="btn btn-success btn-circle" ng-click="undoBtnClicked()">{{'UNDO'| translate}}</button>
+                <button id="undobtn" type="button" class="btn btn-success btn-circle" ng-click="undoBtnClicked()"><p style="font-size: 1vw;">{{'UNDO'| translate}}</p></button>
             </div>
 
             <div class="col-xs-12">
@@ -182,15 +183,16 @@
 
             <div class="col-xs-12" ng-controller="HelpCtrl">
                 <div ng-include="'http://agathaoliveira.github.io/PROJECT_Rummikub/app/template/help.html'"></div>
-                <button class="btn btn-primary btn-circle" ng-click="open()">{{'HELP'| translate}}</button>
+                <button class="btn btn-primary btn-circle" ng-click="open()"><p style="font-size: 1vw;">{{'HELP'| translate}}</p></button>
             </div>
 
             <div class="col-xs-12" style="font-size: 1.5vw">
-                <p id="tiles-left">{{106 - state.trace.nexttile}} {{"TILES_LEFT"| translate}}</p>
+                <p id="tiles-left" style="font-size: 1vw;">{{106 - state.trace.nexttile}} {{"TILES_LEFT"| translate}}</p>
             </div>
 
         </div><!-- /.row -->
     </div><!-- /#menuArea col-xs-1 -->
+  </div>
 </div><!-- #game /.row -->
 
 </body>

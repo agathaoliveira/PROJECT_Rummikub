@@ -13,7 +13,7 @@
 angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices']).constant("CONFIG", {
         GAME_BOARD_ROWS: 6,
         GAME_BOARD_COLS: 18,
-        GAME_AREA_PADDING_PERCENTAGE: 0.02,
+        GAME_AREA_PADDING_PERCENTAGE: 0.06,
 
         SETTING: {
             verbose            : true,
